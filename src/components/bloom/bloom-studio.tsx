@@ -9,11 +9,13 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { FRAG, VERT } from "./shader";
 
+// Backplate grounds. Bars are drawn tone on tone, so one colour defines a plate.
 const PALETTES = {
-  brand: { label: "Brand", line: "--hp-brand", alt: "--hp-pos" },
-  growth: { label: "Growth", line: "--hp-pos", alt: "--hp-brand" },
-  heat: { label: "Heat", line: "--hp-neg", alt: "--hp-warn" },
-  mono: { label: "Mono", line: "--hp-text-primary", alt: "--hp-text-muted" },
+  clay: { label: "Clay", bg: "#e8853d" },
+  brand: { label: "Brand", bg: "#7297f6" },
+  growth: { label: "Growth", bg: "#8dcd8e" },
+  paper: { label: "Paper", bg: "#f1f1ee" },
+  ink: { label: "Ink", bg: "#1b1816" },
 } as const;
 type Palette = keyof typeof PALETTES;
 
@@ -25,28 +27,26 @@ const FORMATS = {
 } as const;
 type Format = keyof typeof FORMATS;
 
-const GROUNDS = { page: "Page", surface: "Surface", clear: "Clear" } as const;
-type Ground = keyof typeof GROUNDS;
-
 type Params = {
   seed: number;
   petals: number;
   layers: number;
-  vol: number;
-  step: number;
-  fill: number;
-  weight: number;
-  grid: number;
-  depth: number;
+  scale: number;
+  x: number;
+  y: number;
+  cols: number;
+  cover: number;
+  dash: number;
+  grain: number;
+  ink: number;
 };
 
-const DEFAULTS: Params = { seed: 7, petals: 6, layers: 4, vol: 0.45, step: 0.6, fill: 0.7, weight: 1.6, grid: 1, depth: 1 };
+const DEFAULTS: Params = { seed: 7, petals: 6, layers: 4, scale: 1.15, x: 0, y: 0.1, cols: 44, cover: 0.8, dash: 0.3, grain: 1, ink: 0.3 };
 
-const UNIFORMS = ["uRes", "uTime", "uSeed", "uPetals", "uVol", "uLayers", "uGrow", "uStep", "uStem", "uGrid", "uDepth", "uFill", "uWeight", "uBgAlpha", "uBg", "uLine", "uAlt", "uInk"] as const;
+const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg"] as const;
 
-function rgb(varName: string): [number, number, number] {
-  const hex = getComputedStyle(document.documentElement).getPropertyValue(varName).trim().replace("#", "");
-  const n = parseInt(hex.slice(0, 6), 16);
+function rgb(hex: string): [number, number, number] {
+  const n = parseInt(hex.replace("#", "").slice(0, 6), 16);
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
@@ -54,16 +54,16 @@ export function BloomStudio() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glRef = useRef<{ gl: WebGLRenderingContext; u: Record<string, WebGLUniformLocation | null> } | null>(null);
   const [params, setParams] = useState<Params>(DEFAULTS);
-  const [palette, setPalette] = useState<Palette>("brand");
+  const [palette, setPalette] = useState<Palette>("clay");
   const [format, setFormat] = useState<Format>("1:1");
-  const [ground, setGround] = useState<Ground>("page");
+  const [cards, setCards] = useState(false);
   const [stem, setStem] = useState(true);
   const [live, setLive] = useState(true);
   const [failed, setFailed] = useState(false);
 
   // Everything the draw call reads lives in a ref so the frame loop never goes stale.
-  const stateRef = useRef({ params, palette, ground, stem, live, growStart: 0, time: 0 });
-  stateRef.current = { ...stateRef.current, params, palette, ground, stem, live };
+  const stateRef = useRef({ params, palette, stem, live, growStart: 0, time: 0 });
+  stateRef.current = { ...stateRef.current, params, palette, stem, live };
 
   const draw = useCallback((now: number) => {
     const ctx = glRef.current;
@@ -71,28 +71,24 @@ export function BloomStudio() {
     if (!ctx || !canvas) return;
     const { gl, u } = ctx;
     const s = stateRef.current;
-    const pal = PALETTES[s.palette];
     if (s.live) s.time = now / 1000;
     const grow = Math.min(1, (now - s.growStart) / 2600);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(u.uRes, canvas.width, canvas.height);
+    gl.uniform2f(u.uPos, s.params.x, s.params.y);
     gl.uniform1f(u.uTime, s.time);
     gl.uniform1f(u.uSeed, s.params.seed);
     gl.uniform1f(u.uPetals, s.params.petals);
     gl.uniform1f(u.uLayers, s.params.layers);
-    gl.uniform1f(u.uVol, s.params.vol);
-    gl.uniform1f(u.uStep, s.params.step);
-    gl.uniform1f(u.uFill, s.params.fill);
-    gl.uniform1f(u.uWeight, s.params.weight);
-    gl.uniform1f(u.uGrid, s.params.grid);
-    gl.uniform1f(u.uDepth, s.params.depth);
+    gl.uniform1f(u.uScale, s.params.scale);
+    gl.uniform1f(u.uCols, s.params.cols);
+    gl.uniform1f(u.uCover, s.params.cover);
+    gl.uniform1f(u.uDash, s.params.dash);
+    gl.uniform1f(u.uGrain, s.params.grain);
+    gl.uniform1f(u.uInk, s.params.ink);
     gl.uniform1f(u.uStem, s.stem ? 1 : 0);
     gl.uniform1f(u.uGrow, grow);
-    gl.uniform1f(u.uBgAlpha, s.ground === "clear" ? 0 : 1);
-    gl.uniform3fv(u.uBg, rgb(s.ground === "surface" ? "--hp-bg-surface" : "--hp-bg-page"));
-    gl.uniform3fv(u.uLine, rgb(pal.line));
-    gl.uniform3fv(u.uAlt, rgb(pal.alt));
-    gl.uniform3fv(u.uInk, rgb("--hp-text-primary"));
+    gl.uniform3fv(u.uBg, rgb(PALETTES[s.palette].bg));
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -205,20 +201,30 @@ export function BloomStudio() {
       <div
         className={cn(
           "enter flex items-center justify-center overflow-hidden rounded-xl p-4 [--stage-h:70dvh] sm:p-8 lg:[--stage-h:max(420px,calc(100dvh-18rem))]",
-          // Checker shows through when the ground is clear.
-          "bg-card bg-[conic-gradient(var(--hp-bg-inset)_25%,transparent_0_50%,var(--hp-bg-inset)_0_75%,transparent_0)] bg-[length:16px_16px]",
+          "bg-card",
         )}
       >
         {failed ? (
           <p className="type-body text-muted-foreground">This browser can’t run WebGL, so the preview is unavailable.</p>
         ) : (
-          <canvas
-            ref={canvasRef}
-            role="img"
-            aria-label="Generated flower drawn from chart lines"
-            className="rounded-lg"
-            style={{ aspectRatio: `${fw} / ${fh}`, width: `min(100%, calc(var(--stage-h) * ${fw / fh}))` }}
-          />
+          <div className="relative overflow-hidden rounded-lg" style={{ aspectRatio: `${fw} / ${fh}`, width: `min(100%, calc(var(--stage-h) * ${fw / fh}))` }}>
+            <canvas ref={canvasRef} role="img" aria-label="Generated backplate: a flower formed by columns of chart bars" className="absolute inset-0 size-full" />
+            {cards ? (
+              // Sample cards, to judge the plate behind UI. Not part of the export.
+              <div aria-hidden className="absolute top-[18%] right-0 flex w-[56%] flex-col gap-2">
+                {[
+                  ["BTC-PERP filled", "Long 0.050 at 61,188.0"],
+                  ["Profit target reached", "50K evaluation · #4021"],
+                  ["Payout sent", "4,120 USDC to 0x7f3a…9b21"],
+                ].map(([t, d]) => (
+                  <div key={t} className="flex flex-col gap-0.5 rounded-l-xl bg-card px-5 py-4 shadow-pop">
+                    <span className="type-body-md font-medium text-foreground">{t}</span>
+                    <span className="type-body text-muted-foreground">{d}</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
         )}
       </div>
 
@@ -244,36 +250,42 @@ export function BloomStudio() {
           <Row label="Layers" value={String(params.layers)}>
             <Slider aria-label="Layers" value={params.layers} min={1} max={6} step={1} onValueChange={(v) => set("layers", v as number)} />
           </Row>
-          <Row label="Volatility" value={`${Math.round(params.vol * 100)}%`}>
-            <Slider aria-label="Volatility" value={params.vol} min={0} max={1} step={0.01} onValueChange={(v) => set("vol", v as number)} />
+          <Row label="Size" value={`${Math.round(params.scale * 100)}%`}>
+            <Slider aria-label="Size" value={params.scale} min={0.4} max={2.5} step={0.05} onValueChange={(v) => set("scale", v as number)} />
           </Row>
-          <Row label="Candle steps" value={`${Math.round(params.step * 100)}%`}>
-            <Slider aria-label="Candle steps" value={params.step} min={0} max={1} step={0.01} onValueChange={(v) => set("step", v as number)} />
+          <Row label="Position X" value={params.x.toFixed(2)}>
+            <Slider aria-label="Position X" value={params.x} min={-0.8} max={0.8} step={0.01} onValueChange={(v) => set("x", v as number)} />
+          </Row>
+          <Row label="Position Y" value={params.y.toFixed(2)}>
+            <Slider aria-label="Position Y" value={params.y} min={-0.8} max={0.8} step={0.01} onValueChange={(v) => set("y", v as number)} />
           </Row>
         </Group>
 
-        <Group label="Chart details">
-          <Row label="Area fill" value={`${Math.round(params.fill * 100)}%`}>
-            <Slider aria-label="Area fill" value={params.fill} min={0} max={1} step={0.01} onValueChange={(v) => set("fill", v as number)} />
+        <Group label="Lines">
+          <Row label="Columns" value={String(params.cols)}>
+            <Slider aria-label="Columns" value={params.cols} min={16} max={90} step={1} onValueChange={(v) => set("cols", v as number)} />
           </Row>
-          <Row label="Line weight" value={params.weight.toFixed(1)}>
-            <Slider aria-label="Line weight" value={params.weight} min={0.6} max={4} step={0.1} onValueChange={(v) => set("weight", v as number)} />
+          <Row label="Ground weight" value={`${Math.round(params.cover * 100)}%`}>
+            <Slider aria-label="Ground weight" value={params.cover} min={0} max={1} step={0.01} onValueChange={(v) => set("cover", v as number)} />
           </Row>
-          <Row label="Grid" value={`${Math.round(params.grid * 100)}%`}>
-            <Slider aria-label="Grid" value={params.grid} min={0} max={2} step={0.05} onValueChange={(v) => set("grid", v as number)} />
+          <Row label="Step length" value={`${Math.round(params.dash * 100)}%`}>
+            <Slider aria-label="Step length" value={params.dash} min={0} max={1} step={0.01} onValueChange={(v) => set("dash", v as number)} />
           </Row>
-          <Row label="Depth bars" value={`${Math.round(params.depth * 100)}%`}>
-            <Slider aria-label="Depth bars" value={params.depth} min={0} max={2} step={0.05} onValueChange={(v) => set("depth", v as number)} />
+          <Row label="Contrast" value={`${Math.round(params.ink * 100)}%`}>
+            <Slider aria-label="Contrast" value={params.ink} min={0} max={1} step={0.01} onValueChange={(v) => set("ink", v as number)} />
+          </Row>
+          <Row label="Grain" value={`${Math.round(params.grain * 100)}%`}>
+            <Slider aria-label="Grain" value={params.grain} min={0} max={2} step={0.05} onValueChange={(v) => set("grain", v as number)} />
           </Row>
           <div className="flex gap-2 pt-1">
             <Switch on={stem} onChange={setStem}>Stem</Switch>
-            <Switch on={live} onChange={setLive}>Live motion</Switch>
+            <Switch on={live} onChange={setLive}>Motion</Switch>
+            <Switch on={cards} onChange={setCards}>Cards</Switch>
           </div>
         </Group>
 
         <Group label="Output">
           <Pick value={format} onChange={(v) => setFormat(v as Format)} options={Object.keys(FORMATS).map((k) => [k, k])} label="Format" />
-          <Pick value={ground} onChange={(v) => setGround(v as Ground)} options={Object.entries(GROUNDS)} label="Background" />
         </Group>
 
         <CtaButton className="mt-auto w-full justify-between" onClick={exportPng} disabled={failed}>
@@ -281,7 +293,7 @@ export function BloomStudio() {
             <Download className="size-3.5" strokeWidth={2} aria-hidden /> Export PNG
           </span>
         </CtaButton>
-        <p className="type-body-sm text-muted-foreground">Exports at 2400px on the long edge, fully bloomed. Colours follow the current theme. Seed {params.seed}.</p>
+        <p className="type-body-sm text-muted-foreground">Exports at 2400px on the long edge, fully bloomed, without the sample cards. Seed {params.seed}.</p>
       </aside>
     </div>
   );

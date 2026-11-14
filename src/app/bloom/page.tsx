@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site/header";
 
 export const metadata: Metadata = {
   title: "Bloom — Prop brand image tool",
-  description: "Generate Prop brand images: flowers grown from the terminal's chart lines, area fills, grids and depth bars.",
+  description: "Generate Prop brand backplates: flowers that emerge from columns of chart bars on a textured ground.",
 };
 
 export default function BloomPage() {
@@ -16,7 +16,7 @@ export default function BloomPage() {
           <p className="type-eyebrow text-muted-foreground">Brand tool</p>
           <h1 className="type-heading">Bloom</h1>
           <p className="type-body-md text-secondary-text [text-wrap:pretty]">
-            Flowers grown from the terminal’s charts. Each petal layer is a price line wrapped into a circle, with the chart’s area fill, gridlines and order-book depth bars around it.
+            Textured backplates for brand imagery. Continuous lines cover a flat ground, stepping thicker and thinner like candles on a chart, and a flower emerges where they swell.
           </p>
         </div>
         <BloomStudio />
