@@ -334,6 +334,22 @@
     animation-name: enter-rise;
   }
 }
+/* Terminal rows (new positions, orders, fills): a shorter, smaller version of .enter. */
+.row-enter {
+  animation: enter-fade 200ms ease-out both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .row-enter {
+    animation-name: row-rise;
+  }
+}
+@keyframes row-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+}
 @keyframes enter-fade {
   from {
     opacity: 0;
@@ -355,7 +371,8 @@
 
 /* ───────────────────────────────────────────────────────────────────────────
  * Hover language adapted from icomat.co.uk (studied from its CSS, Nov 2026).
- * Marketing surfaces only; the terminal keeps instant, high-frequency hovers.
+ * Marketing surfaces, plus the terminal nav, wallet and submit buttons. The terminal's
+ * high-frequency surfaces (book, tables, inputs) keep instant hovers.
  * Every effect runs only on hover-capable pointers, and movement only without
  * the reduced-motion preference (better-ui).
  * ─────────────────────────────────────────────────────────────────────────── */

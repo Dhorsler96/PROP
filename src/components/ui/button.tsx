@@ -5,14 +5,14 @@ import { cn } from "@/lib/utils";
 import { Kbd } from "./kbd";
 
 /**
- * shadcn <Button>, Hyperprop styling. Square, uppercase mono label.
+ * shadcn <Button>, Hyperprop styling. 14px / 500 sentence-case label (x.ai scale).
  * Press feedback: scale 0.96 over 150ms ease-out (better-ui), never when disabled,
  * only without the reduced-motion preference.
  */
 export const buttonVariants = cva(
   [
     "relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border select-none",
-    "type-label [-webkit-tap-highlight-color:transparent]",
+    "font-sans text-sm leading-5 font-medium tracking-[-0.005em] [-webkit-tap-highlight-color:transparent]",
     "transition-[scale,background-color,border-color,color,opacity] duration-150 ease-out",
     "motion-safe:not-disabled:not-aria-disabled:active:scale-[0.96]",
     "disabled:pointer-events-none disabled:opacity-40 aria-disabled:pointer-events-none aria-disabled:opacity-40",
@@ -21,14 +21,14 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "type-button border-primary bg-primary text-primary-foreground hover:border-brand-bright hover:bg-brand-bright",
+          "border-primary bg-primary text-primary-foreground hover:border-brand-bright hover:bg-brand-bright",
         secondary: "border-border bg-secondary text-secondary-foreground hover:border-input",
         outline: "border-input bg-transparent text-foreground hover:border-primary hover:text-primary",
         ghost: "border-transparent bg-transparent text-muted-foreground hover:text-foreground",
-        destructive: "type-button border-destructive bg-destructive text-background hover:opacity-90",
-        positive: "type-button border-positive bg-positive text-background hover:opacity-90",
+        destructive: "border-destructive bg-destructive text-background hover:opacity-90",
+        positive: "border-positive bg-positive text-background hover:opacity-90",
         /** White in Dark, ink in Light: the order submit and wallet buttons. */
-        inverse: "type-button border-foreground bg-foreground text-background hover:opacity-90",
+        inverse: "border-foreground bg-foreground text-background hover:opacity-90",
         link: "h-auto border-transparent px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {

@@ -200,16 +200,16 @@ export function Terminal() {
           <Logo className="h-4 w-auto" />
         </Link>
         <nav aria-label="Primary" className="hidden min-w-0 items-center gap-1 sm:flex">
-          <Link href="/#pricing" className="px-2.5 py-2 type-label whitespace-nowrap text-secondary-text transition-[color] duration-150 ease-out hover:text-primary">
+          <Link href="/#pricing" className="link-draw px-2.5 py-2 text-[13px] leading-[1.5] font-medium whitespace-nowrap text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground">
             Buy evaluation
           </Link>
-          <span aria-current="page" className="px-2.5 py-2 type-label text-primary">
+          <span aria-current="page" className="px-2.5 py-2 text-[13px] leading-[1.5] font-medium text-foreground">
             Trade
           </span>
           <button
             type="button"
             onClick={() => pushToasts([{ title: "Payouts unlock on funded accounts", body: "Reach the profit target to get funded." }])}
-            className="hidden px-2.5 py-2 type-label text-secondary-text transition-[color] duration-150 ease-out hover:text-primary sm:block"
+            className="link-draw hidden px-2.5 py-2 text-[13px] leading-[1.5] font-medium text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground sm:block"
           >
             Payout
           </button>
@@ -219,8 +219,10 @@ export function Terminal() {
             Momentum book <span className="type-label text-muted-foreground">$25K</span>
           </span>
           <ThemeToggle />
-          <Button size="sm" variant="inverse" onClick={() => pushToasts([{ title: "Wallet 0x7f3a…9b21", body: "Connected (demo)" }])}>
-            0x7f3a…9b21
+          <Button size="sm" variant="inverse" className="group/roll" onClick={() => pushToasts([{ title: "Wallet 0x7f3a…9b21", body: "Connected (demo)" }])}>
+            <span className="text-roll">
+              <span>0x7f3a…9b21</span>
+            </span>
           </Button>
         </div>
       </header>
@@ -235,7 +237,7 @@ export function Terminal() {
         style={{ "--bottom-h": `${bottomH}px` } as React.CSSProperties}
       >
         {/* asset bar */}
-        <div className={cn(card, "col-span-full flex h-20 items-center gap-7 overflow-x-auto px-4 [scrollbar-width:none] xl:col-span-2 xl:h-auto")}>
+        <div style={{ "--enter-delay": "0ms" } as React.CSSProperties} className={cn(card, "enter col-span-full flex h-20 items-center gap-7 overflow-x-auto px-4 [scrollbar-width:none] xl:col-span-2 xl:h-auto")}>
           <Menu.Root>
             <Menu.Trigger className="group flex shrink-0 items-center gap-2 py-1.5 font-sans text-2xl font-medium tracking-tight text-foreground">
               {sim.cur}-PERP <ChevronDown className="size-4 text-muted-foreground group-data-popup-open:rotate-180 motion-safe:transition-[rotate] motion-safe:duration-150 motion-safe:ease-out" strokeWidth={1.5} />
@@ -283,7 +285,7 @@ export function Terminal() {
         </div>
 
         {/* chart */}
-        <section aria-label="Price chart" className={cn(card, "flex h-[380px] flex-col xl:h-auto xl:min-h-0")}>
+        <section aria-label="Price chart" style={{ "--enter-delay": "80ms" } as React.CSSProperties} className={cn(card, "enter flex h-[380px] flex-col xl:h-auto xl:min-h-0")}>
           <div className="flex h-10 shrink-0 items-center border-b border-border">
             {/* Intervals use the shared Tabs so the active pill glides between them. */}
             <Tabs value={sim.iv} onValueChange={(iv) => setSim((s) => withMarket(s, s.cur, iv as Interval, rand.current))}>
@@ -295,7 +297,8 @@ export function Terminal() {
                 ))}
               </TabsList>
             </Tabs>
-            <span className="ml-auto px-3 type-data-sm text-muted-foreground">
+            <span className="ml-auto flex items-center gap-2 px-3 type-data-sm text-muted-foreground">
+              <span aria-hidden className="size-1.5 rounded-full bg-positive motion-safe:animate-[pulse-dot_2s_infinite]" />
               {hover ? `${hover.time} · ${fmt(hover.price, m.dec)}` : `${sim.cur}-PERP · ${sim.iv}`}
             </span>
           </div>
@@ -311,7 +314,7 @@ export function Terminal() {
         </section>
 
         {/* order book */}
-        <section aria-label="Order book" className={cn(card, "flex h-[420px] min-h-0 flex-col md:col-start-1 xl:col-start-auto xl:h-auto")}>
+        <section aria-label="Order book" style={{ "--enter-delay": "140ms" } as React.CSSProperties} className={cn(card, "enter flex h-[420px] min-h-0 flex-col md:col-start-1 xl:col-start-auto xl:h-auto")}>
           <Tabs defaultValue="book" className="flex min-h-0 flex-1 flex-col">
             <div className="flex items-center">
               <TabsList className="flex-1">
@@ -366,7 +369,8 @@ export function Terminal() {
         {/* order rail */}
         <aside
           aria-label="Place order"
-          className={cn(card, "md:col-start-2 md:row-span-2 md:row-start-2 xl:col-start-3 xl:row-span-3 xl:row-start-1 xl:overflow-y-auto xl:overscroll-contain")}
+          style={{ "--enter-delay": "200ms" } as React.CSSProperties}
+          className={cn(card, "enter md:col-start-2 md:row-span-2 md:row-start-2 xl:col-start-3 xl:row-span-3 xl:row-start-1 xl:overflow-y-auto xl:overscroll-contain")}
         >
           <form onSubmit={submit} noValidate className="flex flex-col gap-3 border-b border-border px-4 pb-4">
             <Tabs value={type} onValueChange={(t) => { setType(t as "market" | "limit"); if (t === "limit" && !price) setPrice(m.px.toFixed(m.dec)); }}>
@@ -448,9 +452,13 @@ export function Terminal() {
               <Metric label="Fees (0.04%)" value={v.ok ? usd(v.fee) : "—"} />
             </dl>
 
-            <Button type="submit" size="lg" variant="inverse" disabled={!!sim.breached} className="w-full">
-              {side === "long" ? "Buy / Long" : "Sell / Short"} {sim.cur}
-              {type === "limit" ? " · Limit" : ""}
+            <Button type="submit" size="lg" variant="inverse" disabled={!!sim.breached} className="group/roll w-full">
+              <span className="text-roll">
+                <span>
+                  {side === "long" ? "Buy / Long" : "Sell / Short"} {sim.cur}
+                  {type === "limit" ? " · Limit" : ""}
+                </span>
+              </span>
             </Button>
             <p role="alert" className="min-h-4 type-body-sm text-destructive">
               {formError}
@@ -483,7 +491,7 @@ export function Terminal() {
         </aside>
 
         {/* positions / orders / history */}
-        <section aria-label="Account activity" className={cn(card, "relative col-span-full flex min-h-64 flex-col md:col-span-2 xl:col-span-2 xl:min-h-0")}>
+        <section aria-label="Account activity" style={{ "--enter-delay": "260ms" } as React.CSSProperties} className={cn(card, "enter relative col-span-full flex min-h-64 flex-col md:col-span-2 xl:col-span-2 xl:min-h-0")}>
           {/* resize handle on the card's top edge (desktop) */}
           <div
             role="separator"
@@ -542,7 +550,7 @@ export function Terminal() {
                       const u = pnl(sim, p);
                       const roe = (u / ((p.size * p.entry) / p.lev)) * 100;
                       return (
-                        <tr key={p.id} className="border-b border-border transition-[background-color] duration-100 ease-out hover:bg-inset">
+                        <tr key={p.id} className="row-enter border-b border-border transition-[background-color] duration-100 ease-out hover:bg-inset">
                           <Td className="text-foreground">{p.mkt}-PERP</Td>
                           <Td className={p.side === "long" ? "text-positive" : "text-destructive"}>
                             {p.side.toUpperCase()} · {p.lev}×
@@ -562,7 +570,7 @@ export function Terminal() {
                             ) : null}
                           </Td>
                           <Td right>
-                            <Button size="sm" variant="outline" className="h-6 px-2" disabled={!!sim.breached} onClick={() => close(p.id)}>
+                            <Button size="sm" variant="outline" className="h-6 px-2 text-xs" disabled={!!sim.breached} onClick={() => close(p.id)}>
                               Close
                             </Button>
                           </Td>
@@ -580,7 +588,7 @@ export function Terminal() {
                     sim.orders.map((o) => {
                       const mk = sim.markets[o.mkt];
                       return (
-                        <tr key={o.id} className="border-b border-border hover:bg-inset">
+                        <tr key={o.id} className="row-enter border-b border-border hover:bg-inset">
                           <Td className="text-foreground">{o.mkt}-PERP</Td>
                           <Td className={o.side === "long" ? "text-positive" : "text-destructive"}>
                             {o.side === "long" ? "BUY" : "SELL"} · {o.lev}×
@@ -590,7 +598,7 @@ export function Terminal() {
                           <Td right>{fmt(mk.px, mk.dec)}</Td>
                           <Td right className="text-muted-foreground">{o.t}</Td>
                           <Td right>
-                            <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => { setSim((s) => ({ ...s, orders: s.orders.filter((x) => x.id !== o.id) })); pushToasts([{ title: "Order cancelled" }]); }}>
+                            <Button size="sm" variant="outline" className="h-6 px-2 text-xs" onClick={() => { setSim((s) => ({ ...s, orders: s.orders.filter((x) => x.id !== o.id) })); pushToasts([{ title: "Order cancelled" }]); }}>
                               Cancel
                             </Button>
                           </Td>
@@ -608,7 +616,7 @@ export function Terminal() {
                     sim.fills.map((f) => {
                       const mk = sim.markets[f.mkt];
                       return (
-                        <tr key={f.id} className="border-b border-border hover:bg-inset">
+                        <tr key={f.id} className="row-enter border-b border-border hover:bg-inset">
                           <Td className="text-muted-foreground">{f.t}</Td>
                           <Td className="text-foreground">
                             {f.mkt}-PERP <span className="ml-1 type-data-sm text-muted-foreground">{f.reason}</span>
