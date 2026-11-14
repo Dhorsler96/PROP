@@ -185,7 +185,7 @@ export function Terminal() {
     [sim.series.length, sim.iv],
   );
 
-  const card = "overflow-hidden rounded-lg border border-border bg-card";
+  const card = "overflow-hidden rounded-lg bg-card";
   const big = (n: number) => (n >= 1e9 ? `$${fmt(n / 1e9, 2)}B` : `$${fmt(n / 1e6, 1)}M`);
 
   return (
@@ -310,7 +310,7 @@ export function Terminal() {
         {/* order book */}
         <section aria-label="Order book" className={cn(card, "flex h-[420px] min-h-0 flex-col md:col-start-1 xl:col-start-auto xl:h-auto")}>
           <Tabs defaultValue="book" className="flex min-h-0 flex-1 flex-col">
-            <div className="flex items-center pr-3">
+            <div className="flex items-center">
               <TabsList className="flex-1">
                 <TabsTrigger value="book">Book</TabsTrigger>
                 <TabsTrigger value="trades">Trades</TabsTrigger>
