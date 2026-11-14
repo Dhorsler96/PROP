@@ -4,6 +4,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Progress } from "@/components/ui/misc";
 import { rng } from "@/lib/market";
+import { marketsLabel, marketsPhrase } from "@/lib/venue";
 import { TerminalPreview } from "./terminal-preview";
 
 function SectionHead({ eyebrow, title, id, children }: { eyebrow: string; title: string; id: string; children?: React.ReactNode }) {
@@ -23,7 +24,7 @@ const wrap = "mx-auto flex max-w-[1440px] flex-col gap-12 px-4 py-24 sm:px-8 md:
 export function HowItWorks() {
   const steps = [
     ["1", "Buy an evaluation", "Pick an account size from $5K to $100K and pay a one-time fee in USDC from your wallet.", "Fee from", "60 USDC"],
-    ["2", "Hit the target", "Trade Hyperliquid perps until you reach a 10% profit target, without breaching the daily loss or drawdown limit.", "Profit target", "10%"],
+    ["2", "Hit the target", `Trade ${marketsPhrase} until you reach a 10% profit target, without breaching the daily loss or drawdown limit.`, "Profit target", "10%"],
     ["3", "Split the profits", "Pass and you trade a funded account. Withdraw your share of the profit to your wallet when you request a payout.", "Your split", "80–90%"],
   ];
   return (
@@ -126,17 +127,17 @@ export function TerminalSection() {
           <div className="flex flex-col justify-center gap-6 border-b border-border p-6 sm:p-12 lg:border-r lg:border-b-0">
             <p className="type-label text-primary">
               <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
-              Live on Hyperliquid markets
+              Settled on-chain
             </p>
             <h2 id="terminal-title" className="type-display">
               The same terminal from day one
             </h2>
             <p className="type-body-md text-secondary-text [text-wrap:pretty]">
-              You evaluate on the terminal funded traders use, with live Hyperliquid prices and depth. Pass, and the capital behind it is real.
+              You evaluate on the terminal funded traders use, with live prices and depth. Every trade settles on-chain. Pass, and the capital behind it is real.
             </p>
             <dl className="border-t border-border">
               {[
-                ["Markets", "Hyperliquid perps"],
+                ["Markets", marketsLabel],
                 ["Leverage", "Up to 5:1"],
                 ["Payouts", "USDC to your wallet"],
               ].map(([l, v]) => (
