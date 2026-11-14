@@ -62,7 +62,7 @@ export function Pricing() {
                           onClick={() => setTier(i)}
                           aria-pressed={on}
                           className={cn(
-                            "flex w-full flex-col items-center gap-1.5 border-t-2 py-5 transition-[background-color,border-color] duration-150 ease-out hover:bg-inset",
+                            "flex w-full flex-col items-center gap-1.5 border-t-2 py-5 transition-[background-color,border-color] duration-150 ease-out hover:bg-inset [&>span]:transition-[scale] [&>span]:duration-150 [&>span]:ease-out motion-safe:active:[&>span]:scale-[0.96]",
                             on ? "border-primary" : "border-transparent",
                           )}
                         >

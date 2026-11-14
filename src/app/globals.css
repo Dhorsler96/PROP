@@ -261,6 +261,13 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* Controls draw their own pressed state; skip the grey tap flash on touch. */
+  button,
+  a,
+  [role="button"],
+  [role="tab"] {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @keyframes ticker {
@@ -278,10 +285,12 @@
     background: var(--hp-bg-inset);
   }
 }
+/* Toast enter = the staged-entrance recipe: opacity, 4px blur, 12px rise. */
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(12px);
+    filter: blur(4px);
   }
 }
 
@@ -312,11 +321,8 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
+/*
+ * Reduced motion (better-ui): every movement, scale and blur in the components is
+ * gated with motion-safe:, so nothing global is needed to stop it. Opacity fades and
+ * colour transitions still run, so state changes never happen as a hard cut.
+ */

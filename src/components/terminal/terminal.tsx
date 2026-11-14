@@ -50,14 +50,18 @@ export function Terminal() {
     simRef.current = v;
     setSimState(v);
   }, []);
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState<(Toast & { leaving?: boolean })[]>([]);
   const toastId = useRef(0);
 
   const pushToasts = useCallback((list: Omit<Toast, "id">[]) => {
     if (!list.length) return;
     const withIds = list.map((t) => ({ ...t, id: ++toastId.current }));
     setToasts((cur) => [...cur, ...withIds].slice(-4));
-    for (const t of withIds) window.setTimeout(() => setToasts((cur) => cur.filter((x) => x.id !== t.id)), 3600);
+    // Exit is shorter and smaller than the enter (better-ui): mark leaving, fade up 150ms, then remove.
+    for (const t of withIds) {
+      window.setTimeout(() => setToasts((cur) => cur.map((x) => (x.id === t.id ? { ...x, leaving: true } : x))), 3450);
+      window.setTimeout(() => setToasts((cur) => cur.filter((x) => x.id !== t.id)), 3600);
+    }
   }, []);
 
   // Live simulation starts after mount so the first render matches the server.
@@ -233,12 +237,12 @@ export function Terminal() {
         {/* asset bar */}
         <div className={cn(card, "col-span-full flex h-20 items-center gap-7 overflow-x-auto px-4 [scrollbar-width:none] xl:col-span-2 xl:h-auto")}>
           <Menu.Root>
-            <Menu.Trigger className="flex shrink-0 items-center gap-2 py-1.5 font-sans text-2xl font-medium tracking-tight text-foreground">
-              {sim.cur}-PERP <ChevronDown className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
+            <Menu.Trigger className="group flex shrink-0 items-center gap-2 py-1.5 font-sans text-2xl font-medium tracking-tight text-foreground">
+              {sim.cur}-PERP <ChevronDown className="size-4 text-muted-foreground group-data-popup-open:rotate-180 motion-safe:transition-[rotate] motion-safe:duration-150 motion-safe:ease-out" strokeWidth={1.5} />
             </Menu.Trigger>
             <Menu.Portal>
               <Menu.Positioner sideOffset={8} align="start" className="z-50">
-                <Menu.Popup className="min-w-72 origin-(--transform-origin) overscroll-contain rounded-lg border border-input bg-popover p-1 shadow-pop outline-none transition-[scale,opacity] duration-150 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
+                <Menu.Popup className="min-w-72 origin-(--transform-origin) overscroll-contain rounded-lg border border-input bg-popover p-1 shadow-pop outline-none transition-[opacity] duration-150 ease-out data-ending-style:opacity-0 data-starting-style:opacity-0 motion-safe:transition-[opacity,scale] motion-safe:data-ending-style:scale-[0.98] motion-safe:data-starting-style:scale-[0.98]">
                   <div className="px-2.5 py-1.5 type-label text-muted-foreground">Markets</div>
                   {MARKET_KEYS.map((k) => {
                     const mk = sim.markets[k];
@@ -287,7 +291,7 @@ export function Terminal() {
                 type="button"
                 aria-pressed={sim.iv === iv}
                 onClick={() => setSim((s) => withMarket(s, s.cur, iv as Interval, rand.current))}
-                className="h-[30px] rounded-md px-3 type-label text-muted-foreground transition-[color,background-color] duration-150 ease-out hover:text-foreground aria-pressed:bg-brand-bright aria-pressed:text-card"
+                className="h-[30px] rounded-md px-3 type-label text-muted-foreground transition-[color,background-color,scale] duration-150 ease-out hover:text-foreground aria-pressed:bg-brand-bright aria-pressed:text-card motion-safe:active:scale-[0.96]"
               >
                 {iv}
               </button>
@@ -412,7 +416,7 @@ export function Terminal() {
                       const q = Math.floor(maxSize(sim, orderPx, lev) * (p / 100) * 10 ** m.sdec) / 10 ** m.sdec;
                       setSize(q.toFixed(m.sdec));
                     }}
-                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color] duration-150 ease-out first:ml-0 first:rounded-l-md last:rounded-r-md hover:relative hover:border-primary hover:text-primary"
+                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color,scale] duration-150 ease-out first:ml-0 first:rounded-l-md last:rounded-r-md hover:relative hover:border-primary hover:text-primary motion-safe:active:scale-[0.96]"
                   >
                     {p}%
                   </button>
@@ -634,7 +638,10 @@ export function Terminal() {
           <div
             key={t.id}
             className={cn(
-              "rounded-lg border border-input bg-popover px-3.5 py-2.5 shadow-pop motion-safe:animate-[toast-in_300ms_ease-out]",
+              "rounded-lg border border-input bg-popover px-3.5 py-2.5 shadow-pop",
+              "motion-safe:animate-[toast-in_300ms_ease-out] motion-reduce:animate-[enter-fade_200ms_ease-out]",
+              "transition-[opacity,translate,filter] duration-150 ease-out",
+              t.leaving && "opacity-0 motion-safe:-translate-y-3 motion-safe:blur-[4px]",
             )}
           >
             <p className="flex items-center gap-2 type-data text-foreground">

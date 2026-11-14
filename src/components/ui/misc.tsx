@@ -80,7 +80,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionPri
           className="relative size-3 shrink-0 text-muted-foreground group-data-panel-open:text-primary"
         >
           <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-current" />
-          <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current transition-[scale] duration-150 ease-out group-data-panel-open:scale-y-0" />
+          <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current group-data-panel-open:scale-y-0 motion-safe:transition-[scale] motion-safe:duration-150 motion-safe:ease-out" />
         </span>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
@@ -119,7 +119,7 @@ export function SideToggle({
       value={value}
       className={cn(
         "-ml-px flex h-8 flex-1 items-center justify-center border border-input type-label text-muted-foreground first:ml-0 first:rounded-l-md last:rounded-r-md",
-        "transition-[background-color,border-color,color] duration-150 ease-out hover:text-foreground",
+        "transition-[background-color,border-color,color,scale] duration-150 ease-out hover:text-foreground motion-safe:active:scale-[0.96]",
         "data-pressed:relative",
         tone === "buy"
           ? "data-pressed:border-positive data-pressed:bg-pos-wash data-pressed:text-positive"
