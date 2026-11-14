@@ -48,13 +48,13 @@ export function BloomPlate({ src, aspect, className }: { src: string; aspect: nu
       gl.uniform1f(u.uCols, Math.min(r.width, r.height) / 9.5);
       gl.uniform1f(u.uDash, 0.14);
       gl.uniform1f(u.uGrain, 0.5);
-      gl.uniform1f(u.uInk, light ? 0.1 : 0.15);
+      gl.uniform1f(u.uInk, light ? 0.08 : 0.11);
       gl.uniform1f(u.uStem, 0);
       gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / 2200));
       gl.uniform1f(u.uMode, 1);
       gl.uniform1f(u.uImgAspect, aspect);
-      gl.uniform1f(u.uThresh, 0.58);
-      gl.uniform1f(u.uGain, 2.2);
+      gl.uniform1f(u.uThresh, 0.72);
+      gl.uniform1f(u.uGain, 1.7);
       gl.uniform1f(u.uInvert, 0);
       gl.uniform1i(u.uImg, 0);
       gl.uniform3fv(u.uBg, hexRgb(css.getPropertyValue("--hp-bg-page") || "#14120b"));
