@@ -7,11 +7,11 @@ import { rng } from "@/lib/market";
 import { marketsLabel, marketsPhrase } from "@/lib/venue";
 import { TerminalPreview } from "./terminal-preview";
 
-function SectionHead({ eyebrow, title, id, children }: { eyebrow: string; title: string; id: string; children?: React.ReactNode }) {
+function SectionHead({ eyebrow, title, id, children, small }: { eyebrow: string; title: string; id: string; children?: React.ReactNode; small?: boolean }) {
   return (
-    <div className="flex max-w-xl flex-col gap-4">
-      <p className="type-label text-muted-foreground">{eyebrow}</p>
-      <h2 id={id} className="type-display">
+    <div className="flex max-w-xl flex-col gap-5">
+      <p className="type-eyebrow text-muted-foreground">{eyebrow}</p>
+      <h2 id={id} className={small ? "type-heading" : "type-display"}>
         {title}
       </h2>
       {children ? <p className="type-body-md text-secondary-text [text-wrap:pretty]">{children}</p> : null}
@@ -125,7 +125,7 @@ export function TerminalSection() {
       <div className={wrap}>
         <div className="grid overflow-hidden rounded-2xl border border-border lg:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-b border-border p-6 sm:p-12 lg:border-r lg:border-b-0">
-            <p className="type-label text-primary">
+            <p className="type-eyebrow text-primary">
               <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
               Settled on-chain
             </p>
@@ -169,7 +169,7 @@ export function Faq() {
   return (
     <section id="faq" aria-labelledby="faq-title" className="scroll-mt-14 border-b border-border">
       <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-24 sm:px-8 md:px-20 md:py-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-20">
-        <SectionHead eyebrow="FAQ" title="Before you start" id="faq-title" />
+        <SectionHead eyebrow="FAQ" title="Before you start" id="faq-title" small />
         <Accordion defaultValue={["q0"]} className="border-t border-border">
           {qa.map(([q, a], i) => (
             <AccordionItem key={q} value={`q${i}`}>

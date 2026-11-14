@@ -35,15 +35,15 @@ export function Hero() {
       </div>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,var(--background)_0%,color-mix(in_srgb,var(--background)_55%,transparent)_60%,transparent_100%)]" />
 
-      <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-7 px-4 py-28 text-center sm:px-8 md:py-40">
-        <p className="enter type-label text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
+      <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-28 text-center sm:px-8 md:py-40">
+        <p className="enter type-eyebrow text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
           <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
           Decentralized prop trading
         </p>
-        <h1 id="hero-title" className="enter type-hero max-w-[14ch]" style={{ "--enter-delay": "100ms" } as React.CSSProperties}>
+        <h1 id="hero-title" className="enter type-hero max-w-[16ch]" style={{ "--enter-delay": "100ms" } as React.CSSProperties}>
           Trade funded capital
         </h1>
-        <p className="enter max-w-[36rem] type-body-md text-secondary-text [text-wrap:pretty]" style={{ "--enter-delay": "200ms" } as React.CSSProperties}>
+        <p className="enter max-w-[34rem] type-lead text-secondary-text [text-wrap:pretty]" style={{ "--enter-delay": "200ms" } as React.CSSProperties}>
           Buy an evaluation, hit the target, and trade our capital on a live perps terminal. Keep up to 90% of what you make.
         </p>
         <div className="enter flex flex-wrap justify-center gap-3" style={{ "--enter-delay": "300ms" } as React.CSSProperties}>

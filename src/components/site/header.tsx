@@ -22,7 +22,7 @@ export function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="link-draw inline-flex h-8 items-center px-2.5 type-label text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground"
+              className="link-draw inline-flex h-8 items-center px-2.5 text-[13px] leading-[1.5] font-medium text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground"
             >
               {l.label}
             </Link>

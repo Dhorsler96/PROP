@@ -147,27 +147,51 @@
 }
 
 /* Type styles — mirror the Figma text styles (Type spec, node 13:200) */
+/* Marketing heading scale, modelled on x.ai: a restrained hero (36 → 60px), one clear
+   section step (36 → 48px), then 30 / 24px. Solid 1.0 leading on display sizes and a
+   light -1% track, instead of oversized, tightly packed headlines. */
 @utility type-hero {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: clamp(3rem, 6vw, 5.125rem);
-  line-height: 0.94;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.25rem, 1.05rem + 3.4vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 @utility type-display {
   font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 0.96;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-size: clamp(2.25rem, 1.6rem + 1.6vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+@utility type-heading {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 1.25rem + 0.6vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 @utility type-title-display {
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 1.75rem;
-  line-height: 1;
+  font-size: 1.5rem;
+  line-height: 1.33;
+  letter-spacing: -0.01em;
+}
+@utility type-lead {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.625;
+}
+@utility type-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 @utility type-title {
