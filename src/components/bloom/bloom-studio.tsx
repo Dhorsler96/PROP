@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Download, RotateCcw, Shuffle } from "lucide-react";
+import { Download, ImageUp, RotateCcw, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CtaButton } from "@/components/ui/cta";
 import { Slider } from "@/components/ui/misc";
@@ -39,11 +39,15 @@ type Params = {
   dash: number;
   grain: number;
   ink: number;
+  thresh: number;
+  gain: number;
 };
 
-const DEFAULTS: Params = { seed: 7, petals: 6, layers: 4, scale: 1.15, x: 0, y: 0.1, cols: 44, cover: 0.8, dash: 0.3, grain: 1, ink: 0.3 };
+const DEFAULTS: Params = { seed: 7, petals: 6, layers: 4, scale: 1, x: 0, y: 0, cols: 72, cover: 0.8, dash: 0.12, grain: 1, ink: 0.3, thresh: 0.5, gain: 2.0 };
 
-const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg"] as const;
+const DEFAULT_IMAGE = "/bloom/marigold.webp";
+
+const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg", "uMode", "uImgAspect", "uThresh", "uGain", "uInvert", "uImg"] as const;
 
 function rgb(hex: string): [number, number, number] {
   const n = parseInt(hex.replace("#", "").slice(0, 6), 16);
@@ -60,10 +64,15 @@ export function BloomStudio() {
   const [stem, setStem] = useState(true);
   const [live, setLive] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [source, setSource] = useState<"image" | "flower">("image");
+  const [invert, setInvert] = useState(false);
+  const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE);
+  const [imageName, setImageName] = useState("Marigold (default)");
+  const fileRef = useRef<HTMLInputElement>(null);
 
   // Everything the draw call reads lives in a ref so the frame loop never goes stale.
-  const stateRef = useRef({ params, palette, stem, live, growStart: 0, time: 0 });
-  stateRef.current = { ...stateRef.current, params, palette, stem, live };
+  const stateRef = useRef({ params, palette, stem, live, source, invert, imgAspect: 1, imgReady: false, growStart: 0, time: 0 });
+  stateRef.current = { ...stateRef.current, params, palette, stem, live, source, invert };
 
   const draw = useCallback((now: number) => {
     const ctx = glRef.current;
@@ -87,6 +96,12 @@ export function BloomStudio() {
     gl.uniform1f(u.uGrain, s.params.grain);
     gl.uniform1f(u.uInk, s.params.ink);
     gl.uniform1f(u.uStem, s.stem ? 1 : 0);
+    gl.uniform1f(u.uMode, s.source === "image" && s.imgReady ? 1 : 0);
+    gl.uniform1f(u.uImgAspect, s.imgAspect);
+    gl.uniform1f(u.uThresh, s.params.thresh);
+    gl.uniform1f(u.uGain, s.params.gain);
+    gl.uniform1f(u.uInvert, s.invert ? 1 : 0);
+    gl.uniform1i(u.uImg, 0);
     gl.uniform1f(u.uGrow, grow);
     gl.uniform3fv(u.uBg, rgb(PALETTES[s.palette].bg));
     gl.clearColor(0, 0, 0, 0);
@@ -162,6 +177,67 @@ export function BloomStudio() {
       ro.disconnect();
     };
   }, [draw]);
+
+  // Load the threshold image into a small mipmapped texture. Downscaling first
+  // averages the photo so each line step reads a calm brightness, not pixel noise.
+  useEffect(() => {
+    let cancelled = false;
+    const img = new Image();
+    img.onload = () => {
+      const ctx = glRef.current;
+      if (cancelled || !ctx) return;
+      const { gl } = ctx;
+      const c = document.createElement("canvas");
+      c.width = c.height = 256;
+      const c2d = c.getContext("2d");
+      if (!c2d) return;
+      c2d.drawImage(img, 0, 0, 256, 256);
+      // Stretch the tones so flat, low-contrast photos still use every line weight.
+      const data = c2d.getImageData(0, 0, 256, 256);
+      const d = data.data;
+      const hist = new Uint32Array(256);
+      for (let i = 0; i < d.length; i += 4) {
+        const l = Math.round(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]);
+        d[i] = d[i + 1] = d[i + 2] = l;
+        hist[l]++;
+      }
+      const total = d.length / 4;
+      let lo = 0;
+      let hi = 255;
+      for (let acc = 0; lo < 255 && (acc += hist[lo]) < total * 0.03; lo++);
+      for (let acc = 0; hi > 0 && (acc += hist[hi]) < total * 0.03; hi--);
+      const span = Math.max(1, hi - lo);
+      for (let i = 0; i < d.length; i += 4) {
+        d[i] = d[i + 1] = d[i + 2] = Math.max(0, Math.min(255, ((d[i] - lo) / span) * 255));
+      }
+      c2d.putImageData(data, 0, 0);
+      const tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      stateRef.current.imgAspect = img.naturalWidth / img.naturalHeight;
+      stateRef.current.imgReady = true;
+    };
+    img.src = imageUrl;
+    return () => {
+      cancelled = true;
+    };
+  }, [imageUrl]);
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (imageUrl.startsWith("blob:")) URL.revokeObjectURL(imageUrl);
+    setImageUrl(URL.createObjectURL(file));
+    setImageName(file.name);
+    setSource("image");
+    e.target.value = "";
+  };
 
   const set = <K extends keyof Params>(k: K, v: Params[K]) => setParams((p) => ({ ...p, [k]: v }));
   const regrow = () => {
@@ -243,13 +319,51 @@ export function BloomStudio() {
           <Pick value={palette} onChange={(v) => setPalette(v as Palette)} options={Object.entries(PALETTES).map(([k, v]) => [k, v.label])} label="Palette" />
         </Group>
 
-        <Group label="Flower">
-          <Row label="Petals" value={String(params.petals)}>
-            <Slider aria-label="Petals" value={params.petals} min={3} max={12} step={1} onValueChange={(v) => set("petals", v as number)} />
-          </Row>
-          <Row label="Layers" value={String(params.layers)}>
-            <Slider aria-label="Layers" value={params.layers} min={1} max={6} step={1} onValueChange={(v) => set("layers", v as number)} />
-          </Row>
+        <Group label="Source">
+          <Pick value={source} onChange={(v) => setSource(v as "image" | "flower")} options={[["image", "Threshold image"], ["flower", "Generated flower"]]} label="Source" />
+          {source === "image" ? (
+            <>
+              <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="" className="size-12 shrink-0 rounded-md object-cover grayscale" />
+                <span className="min-w-0 flex-1 truncate type-body-sm text-secondary-text">{imageName}</span>
+                <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+                  <ImageUp className="size-3.5" strokeWidth={2} aria-hidden /> Change
+                </Button>
+                <input ref={fileRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-label="Upload threshold image" onChange={onFile} />
+              </div>
+              <Row label="Threshold" value={`${Math.round(params.thresh * 100)}%`}>
+                <Slider aria-label="Threshold" value={params.thresh} min={0} max={1} step={0.01} onValueChange={(v) => set("thresh", v as number)} />
+              </Row>
+              <Row label="Image contrast" value={params.gain.toFixed(1)}>
+                <Slider aria-label="Image contrast" value={params.gain} min={0.5} max={8} step={0.1} onValueChange={(v) => set("gain", v as number)} />
+              </Row>
+              <div className="flex gap-2 pt-1">
+                <Switch on={invert} onChange={setInvert}>Invert</Switch>
+                {imageUrl !== DEFAULT_IMAGE ? (
+                  <Switch on={false} onChange={() => { setImageUrl(DEFAULT_IMAGE); setImageName("Marigold (default)"); }}>Reset image</Switch>
+                ) : null}
+              </div>
+            </>
+          ) : (
+            <>
+              <Row label="Petals" value={String(params.petals)}>
+                <Slider aria-label="Petals" value={params.petals} min={3} max={12} step={1} onValueChange={(v) => set("petals", v as number)} />
+              </Row>
+              <Row label="Layers" value={String(params.layers)}>
+                <Slider aria-label="Layers" value={params.layers} min={1} max={6} step={1} onValueChange={(v) => set("layers", v as number)} />
+              </Row>
+              <Row label="Ground weight" value={`${Math.round(params.cover * 100)}%`}>
+                <Slider aria-label="Ground weight" value={params.cover} min={0} max={1} step={0.01} onValueChange={(v) => set("cover", v as number)} />
+              </Row>
+              <div className="flex gap-2 pt-1">
+                <Switch on={stem} onChange={setStem}>Stem</Switch>
+              </div>
+            </>
+          )}
+        </Group>
+
+        <Group label="Framing">
           <Row label="Size" value={`${Math.round(params.scale * 100)}%`}>
             <Slider aria-label="Size" value={params.scale} min={0.4} max={2.5} step={0.05} onValueChange={(v) => set("scale", v as number)} />
           </Row>
@@ -265,9 +379,6 @@ export function BloomStudio() {
           <Row label="Columns" value={String(params.cols)}>
             <Slider aria-label="Columns" value={params.cols} min={16} max={90} step={1} onValueChange={(v) => set("cols", v as number)} />
           </Row>
-          <Row label="Ground weight" value={`${Math.round(params.cover * 100)}%`}>
-            <Slider aria-label="Ground weight" value={params.cover} min={0} max={1} step={0.01} onValueChange={(v) => set("cover", v as number)} />
-          </Row>
           <Row label="Step length" value={`${Math.round(params.dash * 100)}%`}>
             <Slider aria-label="Step length" value={params.dash} min={0} max={1} step={0.01} onValueChange={(v) => set("dash", v as number)} />
           </Row>
@@ -278,7 +389,6 @@ export function BloomStudio() {
             <Slider aria-label="Grain" value={params.grain} min={0} max={2} step={0.05} onValueChange={(v) => set("grain", v as number)} />
           </Row>
           <div className="flex gap-2 pt-1">
-            <Switch on={stem} onChange={setStem}>Stem</Switch>
             <Switch on={live} onChange={setLive}>Motion</Switch>
             <Switch on={cards} onChange={setCards}>Cards</Switch>
           </div>
@@ -310,7 +420,7 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 
 function Row({ label, value, children }: { label: string; value: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[92px_minmax(0,1fr)_44px] items-center gap-3">
+    <div className="grid grid-cols-[100px_minmax(0,1fr)_44px] items-center gap-3">
       <span className="type-body-sm text-secondary-text">{label}</span>
       {children}
       <output className="text-right type-data-sm text-foreground">{value}</output>

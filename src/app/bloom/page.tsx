@@ -16,7 +16,7 @@ export default function BloomPage() {
           <p className="type-eyebrow text-muted-foreground">Brand tool</p>
           <h1 className="type-heading">Bloom</h1>
           <p className="type-body-md text-secondary-text [text-wrap:pretty]">
-            Textured backplates for brand imagery. Continuous lines cover a flat ground, stepping thicker and thinner like candles on a chart, and a flower emerges where they swell.
+            Textured backplates for brand imagery. Continuous lines cover a flat ground, stepping thicker and thinner like candles on a chart, and an image emerges where they swell. Start from the marigold or upload your own threshold image.
           </p>
         </div>
         <BloomStudio />

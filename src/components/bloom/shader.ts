@@ -12,7 +12,8 @@ void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
 export const FRAG = `
 precision highp float;
 uniform vec2 uRes, uPos;
-uniform float uTime, uSeed, uPetals, uLayers, uScale, uCols, uCover, uDash, uGrain, uStem, uGrow, uInk;
+uniform float uTime, uSeed, uPetals, uLayers, uScale, uCols, uCover, uDash, uGrain, uStem, uGrow, uInk, uMode, uImgAspect, uThresh, uGain, uInvert;
+uniform sampler2D uImg;
 uniform vec3 uBg;
 
 float h1(float n) { return fract(sin(n * 127.1 + uSeed * 31.7) * 43758.5453); }
@@ -72,9 +73,22 @@ void main() {
   float ri = floor(y / ch);
   vec2 centre = vec2((ci + 0.5) * cw, (ri + 0.5) * ch - oy);
 
-  float f = flower(centre);
+  float f = uMode > 0.5 ? 0.0 : flower(centre);
   float v;
-  if (f < 0.5) {
+  float jitter = 0.9;
+  if (uMode > 0.5) {
+    // Threshold image: its brightness sets the line weight. The image covers the plate.
+    float A = uRes.x / uRes.y;
+    vec2 ext = vec2(uRes.x, uRes.y) / m;
+    vec2 size = uImgAspect > A ? vec2(ext.y * uImgAspect, ext.y) : vec2(ext.x, ext.x / uImgAspect);
+    vec2 uv = (centre - uPos) / (size * uScale) + 0.5;
+    uv.y = 1.0 - uv.y;
+    float l = dot(texture2D(uImg, clamp(uv, 0.0, 1.0), 0.5).rgb, vec3(0.299, 0.587, 0.114));
+    l = mix(l, 1.0 - l, uInvert);
+    v = clamp((l - uThresh) * uGain + 0.5, 0.0, 1.0);
+    v *= smoothstep(0.0, 0.35, uGrow + (1.0 - length(centre - uPos)) * uGrow * 2.0);
+    jitter = 0.35;
+  } else if (f < 0.5) {
     // Ground: slow drifts of weight, like volume across a session.
     v = uCover * (0.15 + 0.6 * noise2(centre * 2.2 + 20.0));
   } else if (f > 7.5) {
@@ -84,7 +98,7 @@ void main() {
   } else {
     v = 0.06;
   }
-  float lvl = clamp(floor(v * 4.0 + (h2(vec2(ci, ri)) - 0.5) * 0.9), 0.0, 3.0);
+  float lvl = clamp(floor(v * 4.0 + (h2(vec2(ci, ri)) - 0.5) * jitter), 0.0, 3.0);
   float w = lvl < 0.5 ? 0.09 : lvl < 1.5 ? 0.28 : lvl < 2.5 ? 0.5 : 0.72;
   float bar = 1.0 - smoothstep(w * 0.5 * cw - px, w * 0.5 * cw + px, abs(fx - 0.5) * cw);
 
