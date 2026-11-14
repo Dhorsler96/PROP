@@ -9,14 +9,14 @@ import { Toggle } from "@base-ui/react/toggle";
 import { cn } from "@/lib/utils";
 
 /* ── Slider ─────────────────────────────────────────────── */
-export function Slider({ className, ...props }: SliderPrimitive.Root.Props<number>) {
+export function Slider({ className, "aria-label": ariaLabel = "Leverage", ...props }: SliderPrimitive.Root.Props<number>) {
   return (
     <SliderPrimitive.Root className={cn("w-full", className)} {...props}>
       <SliderPrimitive.Control className="flex h-5 w-full touch-none items-center select-none">
         <SliderPrimitive.Track className="h-1 w-full rounded-full bg-input">
           <SliderPrimitive.Indicator className="rounded-full bg-primary" />
           <SliderPrimitive.Thumb
-            aria-label="Leverage"
+            aria-label={ariaLabel}
             className="size-3.5 rounded-full bg-primary ring-2 ring-background outline-offset-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-ring"
           />
         </SliderPrimitive.Track>

@@ -8,6 +8,7 @@ const links = [
   { href: "/#pricing", label: "Evaluations" },
   { href: "/terminal", label: "Terminal" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/bloom", label: "Bloom" },
 ];
 
 export function SiteHeader() {
