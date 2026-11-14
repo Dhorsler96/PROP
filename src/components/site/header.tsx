@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
-import { ButtonLink } from "@/components/ui/button";
+import { CtaLink } from "@/components/ui/cta";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
@@ -22,7 +22,7 @@ export function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="inline-flex h-8 items-center px-2.5 type-label text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground"
+              className="link-draw inline-flex h-8 items-center px-2.5 type-label text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground"
             >
               {l.label}
             </Link>
@@ -30,9 +30,9 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
-          <ButtonLink href="/terminal" variant="default" size="sm" shortcut="T">
+          <CtaLink href="/terminal" size="sm">
             Launch terminal
-          </ButtonLink>
+          </CtaLink>
         </div>
       </div>
     </header>

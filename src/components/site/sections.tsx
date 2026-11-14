@@ -1,6 +1,6 @@
 import { Logo } from "@/components/logo";
 import { Badge } from "@/components/ui/badge";
-import { ButtonLink } from "@/components/ui/button";
+import { ArrowLink, CtaLink } from "@/components/ui/cta";
 import { Kbd } from "@/components/ui/kbd";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Progress } from "@/components/ui/misc";
 import { rng } from "@/lib/market";
@@ -35,14 +35,14 @@ export function HowItWorks() {
           {steps.map(([n, t, d, kl, kv]) => (
             <li key={n} className="flex flex-col gap-3">
               <Kbd className="h-5 w-fit px-1.5 type-label">Step {n}</Kbd>
-              <div className="flex flex-1 flex-col rounded-xl border border-border bg-card">
+              <div className="group/card flex flex-1 flex-col rounded-xl border border-border bg-card transition-[background-color,border-color,color] duration-300 ease-out hover:border-foreground hover:bg-foreground hover:text-background">
                 <div className="flex flex-col gap-2 p-6 pb-4">
                   <h3 className="type-title-display">{t}</h3>
-                  <p className="type-body text-muted-foreground [text-wrap:pretty]">{d}</p>
+                  <p className="type-body text-muted-foreground transition-[color] duration-300 ease-out [text-wrap:pretty] group-hover/card:text-background/60">{d}</p>
                 </div>
                 <div className="mt-auto flex items-center justify-between px-6 pb-6">
-                  <span className="type-body-sm text-muted-foreground">{kl}</span>
-                  <span className="type-data text-foreground">{kv}</span>
+                  <span className="type-body-sm text-muted-foreground transition-[color] duration-300 ease-out group-hover/card:text-background/60">{kl}</span>
+                  <span className="type-data text-foreground transition-[color] duration-300 ease-out group-hover/card:text-background">{kv}</span>
                 </div>
               </div>
             </li>
@@ -147,9 +147,9 @@ export function TerminalSection() {
                 </div>
               ))}
             </dl>
-            <ButtonLink href="/terminal" variant="outline" size="lg" shortcut="T" className="w-fit">
+            <ArrowLink href="/terminal" className="w-fit">
               Try the terminal
-            </ButtonLink>
+            </ArrowLink>
           </div>
           <TerminalPreview />
         </div>
@@ -208,9 +208,9 @@ export function Closing() {
           Prove it. <span className="text-primary">Get funded.</span>
         </h2>
         <p className="type-body-md text-secondary-text">One evaluation between you and up to $100,000 of trading capital.</p>
-        <ButtonLink href="/#pricing" size="lg" shortcut="B">
+        <CtaLink href="/#pricing">
           Buy evaluation
-        </ButtonLink>
+        </CtaLink>
       </div>
     </section>
   );
@@ -231,10 +231,10 @@ export function Footer() {
             ["Product", [["Evaluations", "/#pricing"], ["Terminal", "/terminal"], ["Rules", "/#rules"]]],
             ["Resources", [["FAQ", "/#faq"], ["How it works", "/#how"]]],
           ].map(([h, ls]) => (
-            <div key={h as string} className="flex flex-col gap-2.5">
+            <div key={h as string} className="group/links flex flex-col gap-2.5">
               <span className="type-label text-muted-foreground">{h as string}</span>
               {(ls as string[][]).map(([l, href]) => (
-                <a key={l} href={href} className="type-body text-foreground transition-[color] duration-150 ease-out hover:text-primary">
+                <a key={l} href={href} className="w-fit type-body text-foreground transition-[opacity] duration-300 ease-out group-hover/links:opacity-30 hover:!opacity-100">
                   {l}
                 </a>
               ))}

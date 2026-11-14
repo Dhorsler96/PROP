@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { CtaButton } from "@/components/ui/cta";
 import { cn, fmt } from "@/lib/utils";
 
 const SIZES = [5000, 10000, 25000, 50000, 100000];
@@ -119,9 +119,9 @@ export function Pricing() {
                 </dd>
               </div>
             </dl>
-            <Button size="lg" shortcut="B" className="ml-auto max-sm:w-full">
+            <CtaButton className="ml-auto max-sm:w-full">
               Buy {short(size).slice(1)} evaluation
-            </Button>
+            </CtaButton>
           </div>
           <p className="mt-4 type-body-sm text-muted-foreground">One-time fee, paid in USDC. The 90% column includes the boost add-on.</p>
         </div>

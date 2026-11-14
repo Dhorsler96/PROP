@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonLink } from "@/components/ui/button";
+import { ArrowLink, CtaLink } from "@/components/ui/cta";
 import { PriceChart } from "@/components/price-chart";
 import { useLiveMarket } from "@/lib/use-live-market";
 import { fmt, signed } from "@/lib/utils";
@@ -47,12 +47,10 @@ export function Hero() {
           Buy an evaluation, hit the target, and trade our capital on a live perps terminal. Keep up to 90% of what you make.
         </p>
         <div className="enter flex flex-wrap justify-center gap-3" style={{ "--enter-delay": "300ms" } as React.CSSProperties}>
-          <ButtonLink href="/#pricing" size="lg" shortcut="B">
-            Buy evaluation
-          </ButtonLink>
-          <ButtonLink href="/terminal" variant="outline" size="lg" shortcut="T" className="bg-background/40">
+          <CtaLink href="/#pricing">Buy evaluation</CtaLink>
+          <ArrowLink href="/terminal" className="bg-background/40">
             Explore the terminal
-          </ButtonLink>
+          </ArrowLink>
         </div>
         <dl className="enter mt-2 flex overflow-hidden rounded-xl border border-border bg-card/80" style={{ "--enter-delay": "400ms" } as React.CSSProperties}>
           {[
