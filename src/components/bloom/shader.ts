@@ -85,6 +85,8 @@ void main() {
     uv.y = 1.0 - uv.y;
     float l = dot(texture2D(uImg, clamp(uv, 0.0, 1.0), 0.5).rgb, vec3(0.299, 0.587, 0.114));
     l = mix(l, 1.0 - l, uInvert);
+    // The weights breathe slowly, like volume coming and going.
+    l += (noise2(centre * 2.5 + vec2(0.0, uTime * 0.12)) - 0.5) * 0.14 * step(0.001, uTime);
     v = clamp((l - uThresh) * uGain + 0.5, 0.0, 1.0);
     v *= smoothstep(0.0, 0.35, uGrow + (1.0 - length(centre - uPos)) * uGrow * 2.0);
     jitter = 0.35;

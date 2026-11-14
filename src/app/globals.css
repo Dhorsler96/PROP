@@ -539,8 +539,3 @@
   }
 }
 
-/* Hero backplate is authored dark; flip it for the paper theme. */
-[data-theme="light"] .hero-plate {
-  filter: invert(1);
-  opacity: 0.3;
-}

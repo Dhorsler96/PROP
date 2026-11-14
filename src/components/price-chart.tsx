@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Candle } from "@/lib/market";
 import { fmt } from "@/lib/utils";
 
 type Props = {
   series: number[];
+  /** OHLC + volume. When given with mode "candles", drawn instead of the line. */
+  candles?: Candle[];
+  mode?: "line" | "candles";
   dec?: number;
   axis?: boolean;
   grid?: boolean;
@@ -12,7 +16,7 @@ type Props = {
   timeLabels?: (index: number) => string;
   className?: string;
   /** Called with the hovered price/time label, or null when the pointer leaves. */
-  onHover?: (info: { price: number; time: string } | null) => void;
+  onHover?: (info: { price: number; time: string; candle?: Candle } | null) => void;
 };
 
 function cssVar(el: Element, name: string, fallback: string) {
@@ -27,8 +31,8 @@ function niceStep(range: number) {
   return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag;
 }
 
-/** Canvas line + area chart. Colours come from the theme tokens, so it follows Dark/Light. */
-export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, timeLabels, className, onHover }: Props) {
+/** Canvas chart: candles with volume, or a line with area fill. Colours come from the theme tokens, so it follows Dark/Light. */
+export function PriceChart({ series, candles, mode = "line", dec = 1, axis = false, grid = true, entry, timeLabels, className, onHover }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const hover = useRef<number | null>(null);
   const draw = useRef<() => void>(() => {});
@@ -65,13 +69,18 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
     const plotW = w - axisW;
     const top = 16;
     const bot = axis ? h - 24 : h;
-    let lo = Math.min(...series);
-    let hi = Math.max(...series);
+    const cs = mode === "candles" && candles && candles.length > 1 ? candles : null;
+    const n = cs ? cs.length : series.length;
+    let lo = cs ? Math.min(...cs.map((c) => c.l)) : Math.min(...series);
+    let hi = cs ? Math.max(...cs.map((c) => c.h)) : Math.max(...series);
     const pad = (hi - lo) * 0.12 || hi * 0.001;
     lo -= pad;
     hi += pad;
     const y = (v: number) => top + ((hi - v) / (hi - lo)) * (bot - top);
-    const step = plotW / (series.length - 1);
+    // Candles sit in the middle of equal slots; the line runs edge to edge.
+    const step = cs ? plotW / n : plotW / (n - 1);
+    const xAt = (i: number) => (cs ? (i + 0.5) * step : i * step);
+    const volH = cs ? (bot - top) * 0.18 : 0;
 
     ctx.font = `500 11px ${C.mono}`;
     if ("fontVariantNumeric" in ctx) (ctx as CanvasRenderingContext2D & { fontVariantNumeric?: string }).fontVariantNumeric = "tabular-nums";
@@ -97,7 +106,7 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
       ctx.textAlign = "center";
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = C.muted;
-      for (let i = 20; i < series.length - 8; i += 30) ctx.fillText(timeLabels(i), i * step, h - 7);
+      for (let i = 20; i < n - 8; i += 30) ctx.fillText(timeLabels(i), xAt(i), h - 7);
       ctx.strokeStyle = C.grid;
       ctx.beginPath();
       ctx.moveTo(0, bot + 0.5);
@@ -107,23 +116,45 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
       ctx.stroke();
     }
 
-    const path = () => {
-      ctx.beginPath();
-      series.forEach((v, i) => (i ? ctx.lineTo(i * step, y(v)) : ctx.moveTo(0, y(v))));
-    };
-    path();
-    ctx.save();
-    ctx.lineTo(plotW, bot);
-    ctx.lineTo(0, bot);
-    ctx.closePath();
-    ctx.globalAlpha = 0.08;
-    ctx.fillStyle = C.line;
-    ctx.fill();
-    ctx.restore();
-    path();
-    ctx.strokeStyle = C.line;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    if (cs) {
+      const bodyW = Math.max(1, Math.floor(step * 0.62));
+      const maxV = Math.max(...cs.map((c) => c.v)) || 1;
+      cs.forEach((c, i) => {
+        const up = c.c >= c.o;
+        const col = up ? C.pos : C.neg;
+        const cx = Math.round(xAt(i));
+        // volume, behind the candles along the bottom
+        const vh = Math.max(1, (c.v / maxV) * volH);
+        ctx.globalAlpha = 0.22;
+        ctx.fillStyle = col;
+        ctx.fillRect(cx - bodyW / 2, bot - vh, bodyW, vh);
+        ctx.globalAlpha = 1;
+        // wick
+        ctx.fillRect(cx - 0.5, y(c.h), 1, Math.max(1, y(c.l) - y(c.h)));
+        // body
+        const yo = y(c.o);
+        const yc = y(c.c);
+        ctx.fillRect(cx - bodyW / 2, Math.min(yo, yc), bodyW, Math.max(1, Math.abs(yc - yo)));
+      });
+    } else {
+      const path = () => {
+        ctx.beginPath();
+        series.forEach((v, i) => (i ? ctx.lineTo(i * step, y(v)) : ctx.moveTo(0, y(v))));
+      };
+      path();
+      ctx.save();
+      ctx.lineTo(plotW, bot);
+      ctx.lineTo(0, bot);
+      ctx.closePath();
+      ctx.globalAlpha = 0.08;
+      ctx.fillStyle = C.line;
+      ctx.fill();
+      ctx.restore();
+      path();
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
 
     if (entry && entry.price > lo && entry.price < hi) {
       const yy = Math.round(y(entry.price)) + 0.5;
@@ -141,10 +172,17 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
       ctx.fillText(entry.label, 8, yy - 4);
     }
 
-    const last = series[series.length - 1];
+    const last = cs ? cs[n - 1].c : series[n - 1];
     const ly = y(last);
     ctx.fillStyle = C.line;
-    ctx.fillRect(plotW - 2, ly - 2, 4, 4);
+    if (cs) {
+      // last-price line across the plot
+      ctx.globalAlpha = 0.5;
+      for (let x = 0; x < plotW; x += 6) ctx.fillRect(x, Math.round(ly), 2, 1);
+      ctx.globalAlpha = 1;
+    } else {
+      ctx.fillRect(plotW - 2, ly - 2, 4, 4);
+    }
     if (axis) {
       ctx.fillRect(plotW + 1, ly - 9, axisW - 1, 18);
       ctx.fillStyle = C.onLine;
@@ -155,9 +193,9 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
 
     const hx = hover.current;
     if (hx != null && hx < plotW) {
-      const i = Math.max(0, Math.min(series.length - 1, Math.round(hx / step)));
-      const v = series[i];
-      const cx = Math.round(i * step) + 0.5;
+      const i = Math.max(0, Math.min(n - 1, cs ? Math.floor(hx / step) : Math.round(hx / step)));
+      const v = cs ? cs[i].c : series[i];
+      const cx = Math.round(xAt(i)) + 0.5;
       const cy = Math.round(y(v)) + 0.5;
       ctx.strokeStyle = C.strong;
       ctx.beginPath();
@@ -167,7 +205,7 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
       ctx.lineTo(plotW, cy);
       ctx.stroke();
       ctx.fillStyle = C.fg;
-      ctx.fillRect(cx - 3, cy - 3, 6, 6);
+      if (!cs) ctx.fillRect(cx - 3, cy - 3, 6, 6);
       if (axis) {
         ctx.fillStyle = C.raised;
         ctx.fillRect(plotW + 1, cy - 9, axisW - 1, 18);
@@ -176,7 +214,7 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
         ctx.textBaseline = "middle";
         ctx.fillText(fmt(v, dec), w - 8, cy);
       }
-      onHover?.({ price: v, time: timeLabels ? timeLabels(i) : "" });
+      onHover?.({ price: v, time: timeLabels ? timeLabels(i) : "", candle: cs ? cs[i] : undefined });
     }
   };
 

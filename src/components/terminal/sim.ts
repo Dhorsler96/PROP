@@ -7,6 +7,8 @@ import {
   genHistory,
   initialMarkets,
   stepPrice,
+  toCandles,
+  type Candle,
   type Interval,
   type Level,
   type Market,
@@ -32,6 +34,7 @@ export type Sim = {
   cur: MarketKey;
   iv: Interval;
   series: number[];
+  candles: Candle[];
   book: { asks: Level[]; bids: Level[]; max: number };
   tape: Trade[];
   tick: number;
@@ -57,6 +60,7 @@ export function initialSim(r: () => number): Sim {
     cur: "BTC",
     iv: "15m",
     series: genHistory(markets.BTC.px, "15m", seriesSeed("BTC", "15m")),
+    candles: toCandles(genHistory(markets.BTC.px, "15m", seriesSeed("BTC", "15m")), seriesSeed("BTC", "15m") + 1),
     book: buildBook(markets.BTC, r),
     tape: [],
     tick: 0,
@@ -123,7 +127,8 @@ export function closePosition(s: Sim, id: number, reason = "Close") {
 /* ── market switching ───────────────────────────────────── */
 export function withMarket(s: Sim, cur: MarketKey, iv: Interval, r: () => number): Sim {
   const m = s.markets[cur];
-  return { ...s, cur, iv, series: genHistory(m.px, iv, seriesSeed(cur, iv)), book: buildBook(m, r), tape: [] };
+  const series = genHistory(m.px, iv, seriesSeed(cur, iv));
+  return { ...s, cur, iv, series, candles: toCandles(series, seriesSeed(cur, iv) + 1), book: buildBook(m, r), tape: [] };
 }
 
 /* ── one simulation tick ────────────────────────────────── */
@@ -141,6 +146,15 @@ export function step(s0: Sim, r: () => number) {
     series.shift();
   }
   s.series = series;
+  // The live candle tracks the mark; a new one opens when the series rolls.
+  const candles = s.candles.slice();
+  const lastC = candles[candles.length - 1];
+  candles[candles.length - 1] = { ...lastC, c: m.px, h: Math.max(lastC.h, m.px), l: Math.min(lastC.l, m.px), v: lastC.v + r() * 0.12 };
+  if (s.tick % 6 === 0) {
+    candles.push({ o: m.px, h: m.px, l: m.px, c: m.px, v: 0.05 });
+    candles.shift();
+  }
+  s.candles = candles;
   s.book = buildBook(m, r);
   if (r() < 0.7) {
     const buy = r() > 0.48;

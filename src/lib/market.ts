@@ -63,6 +63,24 @@ export function genHistory(px: number, iv: Interval, seed: number, n = 140) {
   return out;
 }
 
+export type Candle = { o: number; h: number; l: number; c: number; v: number };
+
+/** Build OHLC candles with volume from a series of closes. Deterministic per seed. */
+export function toCandles(closes: number[], seed: number): Candle[] {
+  const r = rng(seed);
+  let avg = 0;
+  for (let i = 1; i < closes.length; i++) avg += Math.abs(closes[i] - closes[i - 1]);
+  avg = avg / Math.max(1, closes.length - 1) || closes[0] * 0.0005;
+  return closes.map((c, i) => {
+    const o = i ? closes[i - 1] : c - avg * (r() - 0.5);
+    const body = Math.abs(c - o);
+    const h = Math.max(o, c) + (body * 0.5 + avg * 0.4) * r();
+    const l = Math.min(o, c) - (body * 0.5 + avg * 0.4) * r();
+    const v = (0.25 + r() * 0.6) * (0.6 + body / avg);
+    return { o, h, l, c, v };
+  });
+}
+
 /** One mean-reverting tick of the random walk. */
 export function stepPrice(m: Market, r: () => number): Market {
   const drift = (r() - 0.5) * 0.0016 + ((m.anchor - m.px) / m.anchor) * 0.02;

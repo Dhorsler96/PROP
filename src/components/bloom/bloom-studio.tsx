@@ -7,7 +7,7 @@ import { CtaButton } from "@/components/ui/cta";
 import { Slider } from "@/components/ui/misc";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { FRAG, VERT } from "./shader";
+import { hexRgb, initBloom, uploadThreshold, type BloomGl } from "./gl";
 
 // Backplate grounds. Bars are drawn tone on tone, so one colour defines a plate.
 const PALETTES = {
@@ -47,16 +47,9 @@ const DEFAULTS: Params = { seed: 7, petals: 6, layers: 4, scale: 1, x: 0, y: 0, 
 
 const DEFAULT_IMAGE = "/bloom/marigold.webp";
 
-const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg", "uMode", "uImgAspect", "uThresh", "uGain", "uInvert", "uImg"] as const;
-
-function rgb(hex: string): [number, number, number] {
-  const n = parseInt(hex.replace("#", "").slice(0, 6), 16);
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-}
-
 export function BloomStudio() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const glRef = useRef<{ gl: WebGLRenderingContext; u: Record<string, WebGLUniformLocation | null> } | null>(null);
+  const glRef = useRef<BloomGl | null>(null);
   const [params, setParams] = useState<Params>(DEFAULTS);
   const [palette, setPalette] = useState<Palette>("clay");
   const [format, setFormat] = useState<Format>("1:1");
@@ -73,7 +66,9 @@ export function BloomStudio() {
 
   // Everything the draw call reads lives in a ref so the frame loop never goes stale.
   const stateRef = useRef({ params, palette, stem, live, source, invert, imgAspect: 1, imgReady: false, growStart: 0, time: 0 });
-  stateRef.current = { ...stateRef.current, params, palette, stem, live, source, invert };
+  useEffect(() => {
+    Object.assign(stateRef.current, { params, palette, stem, live, source, invert });
+  });
 
   const draw = useCallback((now: number) => {
     const ctx = glRef.current;
@@ -104,7 +99,7 @@ export function BloomStudio() {
     gl.uniform1f(u.uInvert, s.invert ? 1 : 0);
     gl.uniform1i(u.uImg, 0);
     gl.uniform1f(u.uGrow, grow);
-    gl.uniform3fv(u.uBg, rgb(PALETTES[s.palette].bg));
+    gl.uniform3fv(u.uBg, hexRgb(PALETTES[s.palette].bg));
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -115,39 +110,12 @@ export function BloomStudio() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false });
-    if (!gl) {
+    const ctx = initBloom(canvas);
+    if (!ctx) {
       setFailed(true);
       return;
     }
-    const compile = (type: number, src: string) => {
-      const sh = gl.createShader(type)!;
-      gl.shaderSource(sh, src);
-      gl.compileShader(sh);
-      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh) ?? "shader");
-      return sh;
-    };
-    try {
-      const prog = gl.createProgram()!;
-      gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
-      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog) ?? "link");
-      gl.useProgram(prog);
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-      const loc = gl.getAttribLocation(prog, "aPos");
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      const u: Record<string, WebGLUniformLocation | null> = {};
-      for (const name of UNIFORMS) u[name] = gl.getUniformLocation(prog, name);
-      glRef.current = { gl, u };
-    } catch (e) {
-      console.error(e);
-      setFailed(true);
-      return;
-    }
+    glRef.current = ctx;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       setLive(false);
@@ -187,40 +155,7 @@ export function BloomStudio() {
     img.onload = () => {
       const ctx = glRef.current;
       if (cancelled || !ctx) return;
-      const { gl } = ctx;
-      const c = document.createElement("canvas");
-      c.width = c.height = 256;
-      const c2d = c.getContext("2d");
-      if (!c2d) return;
-      c2d.drawImage(img, 0, 0, 256, 256);
-      // Stretch the tones so flat, low-contrast photos still use every line weight.
-      const data = c2d.getImageData(0, 0, 256, 256);
-      const d = data.data;
-      const hist = new Uint32Array(256);
-      for (let i = 0; i < d.length; i += 4) {
-        const l = Math.round(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]);
-        d[i] = d[i + 1] = d[i + 2] = l;
-        hist[l]++;
-      }
-      const total = d.length / 4;
-      let lo = 0;
-      let hi = 255;
-      for (let acc = 0; lo < 255 && (acc += hist[lo]) < total * 0.03; lo++);
-      for (let acc = 0; hi > 0 && (acc += hist[hi]) < total * 0.03; hi--);
-      const span = Math.max(1, hi - lo);
-      for (let i = 0; i < d.length; i += 4) {
-        d[i] = d[i + 1] = d[i + 2] = Math.max(0, Math.min(255, ((d[i] - lo) / span) * 255));
-      }
-      c2d.putImageData(data, 0, 0);
-      const tex = gl.createTexture();
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
-      gl.generateMipmap(gl.TEXTURE_2D);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      if (!uploadThreshold(ctx.gl, img)) return;
       stateRef.current.imgAspect = img.naturalWidth / img.naturalHeight;
       stateRef.current.imgReady = true;
     };

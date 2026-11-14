@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Menu } from "@base-ui/react/menu";
-import { ChevronDown } from "lucide-react";
+import { CandlestickChart, ChevronDown, LineChart } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PriceChart } from "@/components/price-chart";
@@ -180,7 +180,8 @@ export function Terminal() {
   const prog = eq - START;
   const chg = (m.px / m.open - 1) * 100;
   const entryPos = sim.positions.find((p) => p.mkt === sim.cur);
-  const [hover, setHover] = useState<{ price: number; time: string } | null>(null);
+  const [hover, setHover] = useState<{ price: number; time: string; candle?: { o: number; h: number; l: number; c: number } } | null>(null);
+  const [chartMode, setChartMode] = useState<"candles" | "line">("candles");
   const timeLabel = useCallback(
     (i: number) => {
       const d = new Date(Date.now() - (sim.series.length - 1 - i) * INTERVAL_SEC[sim.iv] * 1000);
@@ -297,13 +298,42 @@ export function Terminal() {
                 ))}
               </TabsList>
             </Tabs>
-            <span className="ml-auto flex items-center gap-2 px-3 type-data-sm text-muted-foreground">
+            <div role="group" aria-label="Chart type" className="ml-2 flex items-center gap-0.5 border-l border-border pl-2">
+              {(
+                [
+                  ["candles", "Candles", CandlestickChart],
+                  ["line", "Line", LineChart],
+                ] as const
+              ).map(([k, label, Icon]) => (
+                <button
+                  key={k}
+                  type="button"
+                  aria-label={label}
+                  aria-pressed={chartMode === k}
+                  title={label}
+                  onClick={() => setChartMode(k)}
+                  className={cn(
+                    "grid size-7 place-items-center rounded-md transition-[background-color,color,scale] duration-150 ease-out motion-safe:active:scale-[0.96]",
+                    chartMode === k ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <Icon className="size-3.5" strokeWidth={1.75} aria-hidden />
+                </button>
+              ))}
+            </div>
+            <span className="ml-auto flex items-center gap-2 min-w-0 truncate px-3 type-data-sm text-muted-foreground">
               <span aria-hidden className="size-1.5 rounded-full bg-positive motion-safe:animate-[pulse-dot_2s_infinite]" />
-              {hover ? `${hover.time} · ${fmt(hover.price, m.dec)}` : `${sim.cur}-PERP · ${sim.iv}`}
+              {hover
+                ? hover.candle
+                  ? `${hover.time} · O ${fmt(hover.candle.o, m.dec)} H ${fmt(hover.candle.h, m.dec)} L ${fmt(hover.candle.l, m.dec)} C ${fmt(hover.candle.c, m.dec)}`
+                  : `${hover.time} · ${fmt(hover.price, m.dec)}`
+                : `${sim.cur}-PERP · ${sim.iv}`}
             </span>
           </div>
           <PriceChart
             series={sim.series}
+            candles={sim.candles}
+            mode={chartMode}
             dec={m.dec}
             axis
             timeLabels={timeLabel}
