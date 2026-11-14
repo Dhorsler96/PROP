@@ -21,7 +21,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "type-button border-primary bg-primary text-primary-foreground hover:border-mint-bright hover:bg-mint-bright",
+          "type-button border-primary bg-primary text-primary-foreground hover:border-brand-bright hover:bg-brand-bright",
         secondary: "border-border bg-secondary text-secondary-foreground hover:border-input",
         outline: "border-input bg-transparent text-foreground hover:border-primary hover:text-primary",
         ghost: "border-transparent bg-transparent text-muted-foreground hover:text-foreground",

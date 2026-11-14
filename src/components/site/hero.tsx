@@ -59,10 +59,10 @@ export function Hero() {
             ["Accounts to", "$100K", false],
             ["Evaluations from", "60 USDC", false],
             ["Max split", "90%", true],
-          ].map(([l, v, mint], i) => (
+          ].map(([l, v, accent], i) => (
             <div key={l as string} className={`flex flex-col gap-1 px-4 py-3 text-left sm:px-6 ${i < 2 ? "border-r border-border" : ""}`}>
               <dt className="type-label text-muted-foreground">{l}</dt>
-              <dd className={`type-stat-lg ${mint ? "text-primary" : "text-foreground"}`}>{v}</dd>
+              <dd className={`type-stat-lg ${accent ? "text-primary" : "text-foreground"}`}>{v}</dd>
             </div>
           ))}
         </dl>

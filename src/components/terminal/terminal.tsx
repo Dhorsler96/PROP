@@ -678,7 +678,7 @@ function Metric({ label, value, className }: { label: string; value: string; cla
 
 function Count({ n }: { n: number }) {
   return (
-    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center rounded-sm border px-1 font-mono text-[10px] tracking-normal", n > 0 ? "border-mint-line bg-accent text-primary" : "border-input text-muted-foreground")}>
+    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center rounded-sm border px-1 font-mono text-[10px] tracking-normal", n > 0 ? "border-brand-line bg-accent text-primary" : "border-input text-muted-foreground")}>
       {n}
     </span>
   );

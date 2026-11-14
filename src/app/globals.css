@@ -10,7 +10,7 @@
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  /* Warm neutrals after Cursor: #14120b ground, #edecec text, surfaces = text mixed in at 3–18% */
+  /* Brand #7297f6. Warm neutrals after Cursor: #14120b ground, #edecec text, surfaces = text mixed in at 3–18% */
   --hp-bg-page: #14120b;
   --hp-bg-surface: #1b1912;
   --hp-bg-raised: #1f1d16;
@@ -19,16 +19,16 @@
   --hp-bg-inset: #edecec0f;
   --hp-line-hair: #2e2c26;
   --hp-line-strong: #3b3934;
-  --hp-line-mint: #9fe5c859;
+  --hp-line-brand: #7297f659;
   --hp-text-primary: #edecec;
   --hp-text-secondary: #acaba8;
   --hp-text-muted: #8b8a87;
   --hp-text-disabled: #edecec52;
-  --hp-mint: #9fe5c8;
-  --hp-mint-bright: #b9eed7;
-  --hp-mint-wash: #9fe5c814;
-  --hp-mint-wash-strong: #9fe5c829;
-  --hp-on-mint: #14120b;
+  --hp-brand: #7297f6;
+  --hp-brand-bright: #88abff;
+  --hp-brand-wash: #7297f614;
+  --hp-brand-wash-strong: #7297f629;
+  --hp-on-brand: #14120b;
   --hp-ink: #edecec;
   --hp-pos: #8dcd8e;
   --hp-pos-wash: #8dcd8e1a;
@@ -41,7 +41,7 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  /* Warm paper after Cursor: #f7f7f4 ground, #26251e ink, Cursor's warm border greys */
+  /* Brand #4768c3 (#7297f6 deepened to pass 4.5:1 on paper). Warm paper after Cursor: #f7f7f4 ground, #26251e ink, Cursor's warm border greys */
   --hp-bg-page: #f7f7f4;
   --hp-bg-surface: #fbfbf9;
   --hp-bg-raised: #f1f1ee;
@@ -50,16 +50,16 @@
   --hp-bg-inset: #26251e0a;
   --hp-line-hair: #e4e2dc;
   --hp-line-strong: #d9d5cf;
-  --hp-line-mint: #2f7a5c59;
+  --hp-line-brand: #4768c359;
   --hp-text-primary: #26251e;
   --hp-text-secondary: #65645e;
   --hp-text-muted: #6f6e68;
   --hp-text-disabled: #26251e52;
-  --hp-mint: #2f7a5c;
-  --hp-mint-bright: #286a50;
-  --hp-mint-wash: #2f7a5c14;
-  --hp-mint-wash-strong: #2f7a5c24;
-  --hp-on-mint: #ffffff;
+  --hp-brand: #4768c3;
+  --hp-brand-bright: #3553ac;
+  --hp-brand-wash: #4768c314;
+  --hp-brand-wash-strong: #4768c324;
+  --hp-on-brand: #ffffff;
   --hp-ink: #26251e;
   --hp-pos: #3e7c42;
   --hp-pos-wash: #3e7c4214;
@@ -78,20 +78,20 @@
   --card-foreground: var(--hp-text-primary);
   --popover: var(--hp-bg-elevated);
   --popover-foreground: var(--hp-text-primary);
-  --primary: var(--hp-mint);
-  --primary-foreground: var(--hp-on-mint);
+  --primary: var(--hp-brand);
+  --primary-foreground: var(--hp-on-brand);
   --secondary: var(--hp-bg-highlight);
   --secondary-foreground: var(--hp-text-primary);
   --muted: var(--hp-bg-raised);
   --muted-foreground: var(--hp-text-muted);
-  --accent: var(--hp-mint-wash);
-  --accent-foreground: var(--hp-mint);
+  --accent: var(--hp-brand-wash);
+  --accent-foreground: var(--hp-brand);
   --destructive: var(--hp-neg);
   --positive: var(--hp-pos);
   --warning: var(--hp-warn);
   --border: var(--hp-line-hair);
   --input: var(--hp-line-strong);
-  --ring: var(--hp-mint);
+  --ring: var(--hp-brand);
   --radius: 0.5rem;
 }
 
@@ -127,12 +127,12 @@
   --color-highlight: var(--hp-bg-highlight);
   --color-inset: var(--hp-bg-inset);
   --color-secondary-text: var(--hp-text-secondary);
-  --color-mint-bright: var(--hp-mint-bright);
-  --color-mint-line: var(--hp-line-mint);
+  --color-brand-bright: var(--hp-brand-bright);
+  --color-brand-line: var(--hp-line-brand);
   --color-pos-wash: var(--hp-pos-wash);
   --color-neg-wash: var(--hp-neg-wash);
   --color-warn-wash: var(--hp-warn-wash);
-  --color-mint-wash-strong: var(--hp-mint-wash-strong);
+  --color-brand-wash-strong: var(--hp-brand-wash-strong);
 
   /* Radius scale from one token: sm 4 · md 6 · lg 8 · xl 12 · 2xl 16 */
   --radius-sm: calc(var(--radius) - 4px);
