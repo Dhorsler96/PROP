@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Download, ImageUp, RotateCcw, Shuffle } from "lucide-react";
+import { Check, Copy, Download, ImageUp, RotateCcw, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CtaButton } from "@/components/ui/cta";
 import { Slider } from "@/components/ui/misc";
@@ -68,6 +68,7 @@ export function BloomStudio() {
   const [invert, setInvert] = useState(false);
   const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE);
   const [imageName, setImageName] = useState("Marigold (default)");
+  const [copied, setCopied] = useState<"idle" | "done" | "failed">("idle");
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Everything the draw call reads lives in a ref so the frame loop never goes stale.
@@ -248,25 +249,46 @@ export function BloomStudio() {
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) regrow();
   };
 
-  const exportPng = () => {
+  /** Render the full bloom at export size and return it as a PNG data URL. */
+  const renderFull = () => {
     const canvas = canvasRef.current;
-    if (!canvas || !glRef.current) return;
+    if (!canvas || !glRef.current) return null;
     const [w, h] = FORMATS[format];
     const long = 2400;
     const prev = [canvas.width, canvas.height];
     canvas.width = w >= h ? long : Math.round((long * w) / h);
     canvas.height = h >= w ? long : Math.round((long * h) / w);
     const keep = stateRef.current.growStart;
-    stateRef.current.growStart = -1e6; // export the full bloom
+    stateRef.current.growStart = -1e6;
     draw(performance.now());
     const url = canvas.toDataURL("image/png");
     stateRef.current.growStart = keep;
     canvas.width = prev[0];
     canvas.height = prev[1];
+    return url;
+  };
+
+  const exportPng = () => {
+    const url = renderFull();
+    if (!url) return;
     const a = document.createElement("a");
     a.href = url;
     a.download = `prop-bloom-${params.seed}-${format.replace(":", "x")}.png`;
     a.click();
+  };
+
+  const copyPng = async () => {
+    const url = renderFull();
+    if (!url) return;
+    try {
+      // Passing a promise keeps Safari happy: the write starts inside the click.
+      const blob = fetch(url).then((r) => r.blob());
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopied("done");
+    } catch {
+      setCopied("failed");
+    }
+    window.setTimeout(() => setCopied("idle"), 2000);
   };
 
   const [fw, fh] = FORMATS[format];
@@ -398,12 +420,18 @@ export function BloomStudio() {
           <Pick value={format} onChange={(v) => setFormat(v as Format)} options={Object.keys(FORMATS).map((k) => [k, k])} label="Format" />
         </Group>
 
-        <CtaButton className="mt-auto w-full justify-between" onClick={exportPng} disabled={failed}>
-          <span className="inline-flex items-center gap-2">
-            <Download className="size-3.5" strokeWidth={2} aria-hidden /> Export PNG
-          </span>
-        </CtaButton>
-        <p className="type-body-sm text-muted-foreground">Exports at 2400px on the long edge, fully bloomed, without the sample cards. Seed {params.seed}.</p>
+        <div className="mt-auto flex gap-2">
+          <Button variant="outline" size="lg" className="flex-1 px-4" onClick={copyPng} disabled={failed}>
+            {copied === "done" ? <Check className="size-3.5" strokeWidth={2} aria-hidden /> : <Copy className="size-3.5" strokeWidth={2} aria-hidden />}
+            <span aria-live="polite">{copied === "done" ? "Copied" : copied === "failed" ? "Couldn’t copy" : "Copy image"}</span>
+          </Button>
+          <CtaButton className="flex-1 justify-between px-4" onClick={exportPng} disabled={failed}>
+            <span className="inline-flex items-center gap-2">
+              <Download className="size-3.5" strokeWidth={2} aria-hidden /> Export
+            </span>
+          </CtaButton>
+        </div>
+        <p className="type-body-sm text-muted-foreground">Copies and exports at 2400px on the long edge, fully bloomed, without the sample cards. Seed {params.seed}.</p>
       </aside>
     </div>
   );
