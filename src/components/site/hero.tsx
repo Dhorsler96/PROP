@@ -1,39 +1,14 @@
 "use client";
 
 import { ArrowLink, CtaLink } from "@/components/ui/cta";
-import { PriceChart } from "@/components/price-chart";
-import { useLiveMarket } from "@/lib/use-live-market";
-import { fmt, signed } from "@/lib/utils";
-import { buildBook, rng } from "@/lib/market";
-import { useMemo } from "react";
+import { fmt } from "@/lib/utils";
 
 export function Hero() {
-  const { m, series, tick } = useLiveMarket("BTC", "15m", 11, 140);
-  const book = useMemo(() => buildBook(m, rng(1000 + tick), 16), [m, tick]);
-  const chg = (m.px / m.open - 1) * 100;
-
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-border">
-      {/* Ghost terminal: a dimmed, live, read-only terminal behind the headline */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid grid-cols-1 grid-rows-[56px_1fr] opacity-35 md:grid-cols-[1fr_300px]">
-        <div className="col-span-full flex items-center gap-8 overflow-hidden border-b border-border px-6 whitespace-nowrap">
-          <Stat label="Market" value="BTC-PERP" />
-          <Stat label="Mark" value={fmt(m.px, 1)} />
-          <Stat label="24h change" value={`${signed(chg)}%`} tone={chg >= 0 ? "pos" : "neg"} />
-          <Stat label="Funding" value={`${signed(m.fund, 4)}%`} tone="pos" />
-          <Stat label="Open interest" value="$1.24B" />
-        </div>
-        <PriceChart series={series} className="size-full" />
-        <div className="hidden flex-col overflow-hidden border-l border-border bg-card md:flex">
-          {[...book.asks].reverse().map((l) => (
-            <Row key={`a${l.px}`} side="ask" px={l.px} sz={l.sz} total={l.total} max={book.max} />
-          ))}
-          {book.bids.map((l) => (
-            <Row key={`b${l.px}`} side="bid" px={l.px} sz={l.sz} total={l.total} max={book.max} />
-          ))}
-        </div>
-      </div>
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,var(--background)_0%,color-mix(in_srgb,var(--background)_55%,transparent)_60%,transparent_100%)]" />
+      {/* Bloom backplate (made in /bloom): chart lines that swell into a flower. */}
+      <div aria-hidden className="hero-plate pointer-events-none absolute inset-0 bg-[url(/bloom/hero-plate.webp)] bg-cover bg-center opacity-45" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_45%,color-mix(in_srgb,var(--background)_70%,transparent)_0%,transparent_100%)]" />
 
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-28 text-center sm:px-8 md:py-40">
         <p className="enter type-eyebrow text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
@@ -66,15 +41,6 @@ export function Hero() {
         </dl>
       </div>
     </section>
-  );
-}
-
-function Stat({ label, value, tone }: { label: string; value: string; tone?: "pos" | "neg" }) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="type-label text-muted-foreground">{label}</span>
-      <span className={`type-data ${tone === "pos" ? "text-positive" : tone === "neg" ? "text-destructive" : "text-foreground"}`}>{value}</span>
-    </div>
   );
 }
 
