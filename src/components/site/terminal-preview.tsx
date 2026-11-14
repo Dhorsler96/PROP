@@ -18,7 +18,7 @@ export function TerminalPreview() {
         <span className="type-data text-foreground">{fmt(m.px, 1)}</span>
         <span className={`type-data ${chg >= 0 ? "text-positive" : "text-destructive"}`}>{signed(chg)}%</span>
         <span className="ml-auto type-label text-primary">
-          <span className="mr-1.5 inline-block size-1.5 bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
+          <span className="mr-1.5 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
           Live
         </span>
       </div>

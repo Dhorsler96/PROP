@@ -90,7 +90,7 @@
   --border: var(--hp-line-hair);
   --input: var(--hp-line-strong);
   --ring: var(--hp-mint);
-  --radius: 0px;
+  --radius: 0.5rem;
 }
 
 @theme inline {
@@ -132,9 +132,12 @@
   --color-warn-wash: var(--hp-warn-wash);
   --color-mint-wash-strong: var(--hp-mint-wash-strong);
 
-  --radius-sm: var(--radius);
-  --radius-md: var(--radius);
+  /* Radius scale from one token: sm 4 · md 6 · lg 8 · xl 12 · 2xl 16 */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
   --shadow-pop: var(--hp-shadow-pop);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }

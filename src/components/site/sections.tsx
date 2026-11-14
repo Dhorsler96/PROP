@@ -34,7 +34,7 @@ export function HowItWorks() {
           {steps.map(([n, t, d, kl, kv]) => (
             <li key={n} className="flex flex-col gap-3">
               <Kbd className="h-5 w-fit px-1.5 type-label">Step {n}</Kbd>
-              <div className="flex flex-1 flex-col border border-border bg-card">
+              <div className="flex flex-1 flex-col rounded-xl border border-border bg-card">
                 <div className="flex flex-col gap-2 p-6 pb-4">
                   <h3 className="type-title-display">{t}</h3>
                   <p className="type-body text-muted-foreground [text-wrap:pretty]">{d}</p>
@@ -82,7 +82,7 @@ export function Rules() {
               </div>
             ))}
           </dl>
-          <figure className="border border-border bg-card" aria-label="Example evaluation account">
+          <figure className="overflow-hidden rounded-xl border border-border bg-card" aria-label="Example evaluation account">
             <figcaption className="flex flex-wrap items-center gap-3 border-b border-border px-5 py-3.5">
               <span className="type-data text-foreground">50K evaluation · #4021</span>
               <Badge variant="warning">Evaluation</Badge>
@@ -122,10 +122,10 @@ export function TerminalSection() {
   return (
     <section id="terminal" aria-labelledby="terminal-title" className="scroll-mt-14 border-b border-border">
       <div className={wrap}>
-        <div className="grid border border-border lg:grid-cols-2">
+        <div className="grid overflow-hidden rounded-2xl border border-border lg:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-b border-border p-6 sm:p-12 lg:border-r lg:border-b-0">
             <p className="type-label text-primary">
-              <span className="mr-2 inline-block size-1.5 bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
+              <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
               Live on Hyperliquid markets
             </p>
             <h2 id="terminal-title" className="type-display">

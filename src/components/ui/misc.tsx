@@ -13,11 +13,11 @@ export function Slider({ className, ...props }: SliderPrimitive.Root.Props<numbe
   return (
     <SliderPrimitive.Root className={cn("w-full", className)} {...props}>
       <SliderPrimitive.Control className="flex h-5 w-full touch-none items-center select-none">
-        <SliderPrimitive.Track className="h-0.5 w-full bg-input">
-          <SliderPrimitive.Indicator className="bg-primary" />
+        <SliderPrimitive.Track className="h-1 w-full rounded-full bg-input">
+          <SliderPrimitive.Indicator className="rounded-full bg-primary" />
           <SliderPrimitive.Thumb
             aria-label="Leverage"
-            className="size-3 bg-primary outline-offset-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-ring"
+            className="size-3.5 rounded-full bg-primary ring-2 ring-background outline-offset-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-ring"
           />
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>
@@ -47,9 +47,9 @@ export function Progress({
 }) {
   return (
     <ProgressPrimitive.Root value={Math.max(0, Math.min(100, value))} aria-label={label} className={className}>
-      <ProgressPrimitive.Track className="h-0.5 w-full overflow-hidden bg-input">
+      <ProgressPrimitive.Track className="h-1 w-full overflow-hidden rounded-full bg-input">
         <ProgressPrimitive.Indicator
-          className={cn("h-full transition-[width] duration-300 ease-out", tones[tone])}
+          className={cn("h-full rounded-full transition-[width] duration-300 ease-out", tones[tone])}
         />
       </ProgressPrimitive.Track>
     </ProgressPrimitive.Root>
@@ -118,7 +118,7 @@ export function SideToggle({
     <Toggle
       value={value}
       className={cn(
-        "-ml-px flex h-8 flex-1 items-center justify-center border border-input type-label text-muted-foreground first:ml-0",
+        "-ml-px flex h-8 flex-1 items-center justify-center border border-input type-label text-muted-foreground first:ml-0 first:rounded-l-md last:rounded-r-md",
         "transition-[background-color,border-color,color] duration-150 ease-out hover:text-foreground",
         "data-pressed:relative",
         tone === "buy"

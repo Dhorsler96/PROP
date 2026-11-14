@@ -236,7 +236,7 @@ export function Terminal() {
             </Menu.Trigger>
             <Menu.Portal>
               <Menu.Positioner sideOffset={8} align="start" className="z-50">
-                <Menu.Popup className="min-w-72 origin-(--transform-origin) overscroll-contain border border-input bg-popover p-1 shadow-pop outline-none transition-[scale,opacity] duration-150 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
+                <Menu.Popup className="min-w-72 origin-(--transform-origin) overscroll-contain rounded-lg border border-input bg-popover p-1 shadow-pop outline-none transition-[scale,opacity] duration-150 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
                   <div className="px-2.5 py-1.5 type-label text-muted-foreground">Markets</div>
                   {MARKET_KEYS.map((k) => {
                     const mk = sim.markets[k];
@@ -246,7 +246,7 @@ export function Terminal() {
                         key={k}
                         onClick={() => setMarket(k)}
                         className={cn(
-                          "grid cursor-default grid-cols-[1fr_auto_auto] gap-4 px-2.5 py-2 type-data outline-none data-highlighted:bg-accent data-highlighted:text-primary",
+                          "grid cursor-default grid-cols-[1fr_auto_auto] gap-4 rounded-sm px-2.5 py-2 type-data outline-none data-highlighted:bg-accent data-highlighted:text-primary",
                           k === sim.cur && "text-primary",
                         )}
                       >
@@ -410,7 +410,7 @@ export function Terminal() {
                       const q = Math.floor(maxSize(sim, orderPx, lev) * (p / 100) * 10 ** m.sdec) / 10 ** m.sdec;
                       setSize(q.toFixed(m.sdec));
                     }}
-                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color] duration-150 ease-out first:ml-0 hover:relative hover:border-primary hover:text-primary"
+                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color] duration-150 ease-out first:ml-0 first:rounded-l-md last:rounded-r-md hover:relative hover:border-primary hover:text-primary"
                   >
                     {p}%
                   </button>
@@ -466,7 +466,7 @@ export function Terminal() {
             <Metric label="Target progress" value={`${signed(prog, 0)} / $${fmt(TARGET, 0)}`} className={prog > 0 ? "text-positive" : prog < 0 ? "text-destructive" : "text-muted-foreground"} />
             <Progress value={(prog / TARGET) * 100} tone="positive" label="Target progress" />
             {sim.breached ? (
-              <div role="alert" className="mt-2 border border-destructive bg-neg-wash p-3 type-body-sm text-destructive">
+              <div role="alert" className="mt-2 rounded-lg border border-destructive bg-neg-wash p-3 type-body-sm text-destructive">
                 Rule breached: {sim.breached}. In a live evaluation this ends the account.
                 <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => setSim(initialSim(rng(42)))}>
                   Reset demo account
@@ -633,11 +633,16 @@ export function Terminal() {
           <div
             key={t.id}
             className={cn(
-              "border border-input border-l-2 bg-popover px-3.5 py-2.5 shadow-pop motion-safe:animate-[toast-in_300ms_ease-out]",
-              t.tone === "pos" ? "border-l-positive" : t.tone === "neg" ? "border-l-destructive" : "border-l-primary",
+              "rounded-lg border border-input bg-popover px-3.5 py-2.5 shadow-pop motion-safe:animate-[toast-in_300ms_ease-out]",
             )}
           >
-            <p className="type-data text-foreground">{t.title}</p>
+            <p className="flex items-center gap-2 type-data text-foreground">
+              <span
+                aria-hidden
+                className={cn("size-1.5 shrink-0 rounded-full", t.tone === "pos" ? "bg-positive" : t.tone === "neg" ? "bg-destructive" : "bg-primary")}
+              />
+              {t.title}
+            </p>
             {t.body ? <p className="type-body-sm text-secondary-text">{t.body}</p> : null}
           </div>
         ))}
@@ -673,7 +678,7 @@ function Metric({ label, value, className }: { label: string; value: string; cla
 
 function Count({ n }: { n: number }) {
   return (
-    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center border px-1 font-mono text-[10px] tracking-normal", n > 0 ? "border-mint-line bg-accent text-primary" : "border-input text-muted-foreground")}>
+    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center rounded-sm border px-1 font-mono text-[10px] tracking-normal", n > 0 ? "border-mint-line bg-accent text-primary" : "border-input text-muted-foreground")}>
       {n}
     </span>
   );

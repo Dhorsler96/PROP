@@ -37,7 +37,7 @@ export function Hero() {
 
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-7 px-4 py-28 text-center sm:px-8 md:py-40">
         <p className="enter type-label text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
-          <span className="mr-2 inline-block size-1.5 bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
+          <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
           Decentralized prop trading
         </p>
         <h1 id="hero-title" className="enter type-hero max-w-[14ch]" style={{ "--enter-delay": "100ms" } as React.CSSProperties}>
@@ -54,7 +54,7 @@ export function Hero() {
             Explore the terminal
           </ButtonLink>
         </div>
-        <dl className="enter mt-2 flex border border-border bg-card/80" style={{ "--enter-delay": "400ms" } as React.CSSProperties}>
+        <dl className="enter mt-2 flex overflow-hidden rounded-xl border border-border bg-card/80" style={{ "--enter-delay": "400ms" } as React.CSSProperties}>
           {[
             ["Accounts to", "$100K", false],
             ["Evaluations from", "60 USDC", false],

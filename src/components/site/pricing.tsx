@@ -45,7 +45,7 @@ export function Pricing() {
         </div>
 
         <div>
-          <div className="overflow-x-auto overscroll-x-contain border border-border bg-card">
+          <div className="overflow-x-auto overscroll-x-contain rounded-t-xl border border-border bg-card">
             <table className="w-full min-w-[760px] table-fixed border-collapse tabular-nums">
               <caption className="sr-only">Evaluation tiers</caption>
               <thead>
@@ -100,7 +100,7 @@ export function Pricing() {
               </tbody>
             </table>
           </div>
-          <div className="-mt-px flex flex-wrap items-center gap-x-10 gap-y-4 border border-border bg-muted px-6 py-5">
+          <div className="-mt-px flex flex-wrap items-center gap-x-10 gap-y-4 rounded-b-xl border border-border bg-muted px-6 py-5">
             <dl className="flex flex-wrap gap-x-10 gap-y-3">
               {[
                 ["Account", `$${fmt(size, 0)}`],

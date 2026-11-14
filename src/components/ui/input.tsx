@@ -10,7 +10,7 @@ export function InputGroup({ className, ...props }: React.ComponentProps<"div">)
     <div
       data-slot="input-group"
       className={cn(
-        "flex h-10 items-stretch border border-border bg-muted transition-[border-color] duration-150 ease-out",
+        "flex h-10 items-stretch overflow-hidden rounded-md border border-border bg-muted transition-[border-color] duration-150 ease-out",
         "focus-within:border-ring has-aria-invalid:border-destructive has-disabled:opacity-50",
         className,
       )}

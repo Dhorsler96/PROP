@@ -11,7 +11,7 @@ import { Kbd } from "./kbd";
  */
 export const buttonVariants = cva(
   [
-    "relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap border select-none",
+    "relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border select-none",
     "type-label [-webkit-tap-highlight-color:transparent]",
     "transition-[scale,background-color,border-color,color,opacity] duration-150 ease-out",
     "motion-safe:not-disabled:not-aria-disabled:active:scale-[0.96]",
@@ -32,7 +32,7 @@ export const buttonVariants = cva(
       size: {
         sm: "h-8 px-3",
         default: "h-10 px-5",
-        lg: "h-12 px-7",
+        lg: "h-12 rounded-lg px-7",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

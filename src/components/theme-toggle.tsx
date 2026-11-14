@@ -49,7 +49,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex size-8 items-center justify-center border border-border text-muted-foreground",
+        "inline-flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground",
         "transition-[color,border-color,scale] duration-150 ease-out hover:border-input hover:text-foreground",
         "motion-safe:active:scale-[0.96]",
         className,
