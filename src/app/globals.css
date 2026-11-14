@@ -1,26 +1,309 @@
 @import "tailwindcss";
 
+/*
+ * Hyperprop design tokens, exported from the PROP Figma file ("Hyperprop" variable
+ * collection, Dark + Light modes). The shadcn token layer below aliases them, exactly
+ * as the "shadcn" collection does in Figma.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --hp-bg-page: #0f1012;
+  --hp-bg-surface: #16181b;
+  --hp-bg-raised: #1d2024;
+  --hp-bg-elevated: #24282c;
+  --hp-bg-highlight: #2c3035;
+  --hp-bg-inset: #ffffff0f;
+  --hp-line-hair: #25292e;
+  --hp-line-strong: #363b41;
+  --hp-line-mint: #97fce459;
+  --hp-text-primary: #ffffff;
+  --hp-text-secondary: #b6bcc3;
+  --hp-text-muted: #7f868f;
+  --hp-text-disabled: #ffffff52;
+  --hp-mint: #97fce4;
+  --hp-mint-bright: #b6feec;
+  --hp-mint-wash: #97fce414;
+  --hp-mint-wash-strong: #97fce429;
+  --hp-on-mint: #04130e;
+  --hp-ink: #ffffff;
+  --hp-pos: #4ade80;
+  --hp-pos-wash: #4ade801a;
+  --hp-neg: #f87171;
+  --hp-neg-wash: #f871711a;
+  --hp-warn: #f5c36e;
+  --hp-warn-wash: #f5c36e1a;
+  --hp-shadow-pop: 0 24px 64px rgb(0 0 0 / 0.6);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --hp-bg-page: #f7f7f4;
+  --hp-bg-surface: #fcfcfa;
+  --hp-bg-raised: #efeee9;
+  --hp-bg-elevated: #ffffff;
+  --hp-bg-highlight: #e6e5df;
+  --hp-bg-inset: #26251e0a;
+  --hp-line-hair: #e4e2dc;
+  --hp-line-strong: #d9d5cf;
+  --hp-line-mint: #0e8f7459;
+  --hp-text-primary: #26251e;
+  --hp-text-secondary: #55544c;
+  --hp-text-muted: #8b8a82;
+  --hp-text-disabled: #26251e52;
+  --hp-mint: #0e8f74;
+  --hp-mint-bright: #0b7a63;
+  --hp-mint-wash: #0e8f7414;
+  --hp-mint-wash-strong: #0e8f7424;
+  --hp-on-mint: #ffffff;
+  --hp-ink: #26251e;
+  --hp-pos: #16803c;
+  --hp-pos-wash: #16803c14;
+  --hp-neg: #d12f2f;
+  --hp-neg-wash: #d12f2f12;
+  --hp-warn: #a8610a;
+  --hp-warn-wash: #a8610a14;
+  --hp-shadow-pop: 0 16px 48px rgb(38 37 30 / 0.12);
+}
+
+/* shadcn token layer */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--hp-bg-page);
+  --foreground: var(--hp-text-primary);
+  --card: var(--hp-bg-surface);
+  --card-foreground: var(--hp-text-primary);
+  --popover: var(--hp-bg-elevated);
+  --popover-foreground: var(--hp-text-primary);
+  --primary: var(--hp-mint);
+  --primary-foreground: var(--hp-on-mint);
+  --secondary: var(--hp-bg-highlight);
+  --secondary-foreground: var(--hp-text-primary);
+  --muted: var(--hp-bg-raised);
+  --muted-foreground: var(--hp-text-muted);
+  --accent: var(--hp-mint-wash);
+  --accent-foreground: var(--hp-mint);
+  --destructive: var(--hp-neg);
+  --positive: var(--hp-pos);
+  --warning: var(--hp-warn);
+  --border: var(--hp-line-hair);
+  --input: var(--hp-line-strong);
+  --ring: var(--hp-mint);
+  --radius: 0px;
 }
 
 @theme inline {
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-positive: var(--positive);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Hyperprop extras */
+  --color-surface: var(--hp-bg-surface);
+  --color-raised: var(--hp-bg-raised);
+  --color-elevated: var(--hp-bg-elevated);
+  --color-highlight: var(--hp-bg-highlight);
+  --color-inset: var(--hp-bg-inset);
+  --color-secondary-text: var(--hp-text-secondary);
+  --color-mint-bright: var(--hp-mint-bright);
+  --color-mint-line: var(--hp-line-mint);
+  --color-pos-wash: var(--hp-pos-wash);
+  --color-neg-wash: var(--hp-neg-wash);
+  --color-warn-wash: var(--hp-warn-wash);
+  --color-mint-wash-strong: var(--hp-mint-wash-strong);
+
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --shadow-pop: var(--hp-shadow-pop);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Type styles — mirror the Figma text styles (Type spec, node 13:200) */
+@utility type-hero {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(3rem, 6vw, 5.125rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+@utility type-display {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+@utility type-title-display {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 1.75rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+@utility type-title {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+@utility type-body-md {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+@utility type-body {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+@utility type-body-sm {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+@utility type-stat-xl {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-stat-lg {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-data {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-data-sm {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+@utility type-button {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    background: var(--background);
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 1px solid var(--ring);
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes pulse-dot {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes flash {
+  from {
+    background: var(--hp-bg-inset);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/*
+ * Staged entrance (better-ui enter-exit): opacity for everyone; blur + 12px rise only
+ * without the reduced-motion preference. Hidden state lives in the `from` keyframe so
+ * content stays visible if the animation never runs. Stagger with --enter-delay (100ms steps).
+ */
+.enter {
+  animation: enter-fade 300ms ease-out both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation-name: enter-rise;
+  }
+}
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
