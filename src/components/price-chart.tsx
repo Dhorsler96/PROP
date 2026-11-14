@@ -58,7 +58,7 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
       strong: cssVar(cv, "--input", "#363b41"),
       pos: cssVar(cv, "--positive", "#4ade80"),
       neg: cssVar(cv, "--destructive", "#f87171"),
-      mono: getComputedStyle(cv).getPropertyValue("--font-geist-mono").trim() || "ui-monospace, monospace",
+      mono: getComputedStyle(cv).getPropertyValue("--font-instrument").trim() || "ui-sans-serif, system-ui, sans-serif",
     };
 
     const axisW = axis ? 68 : 0;
@@ -73,7 +73,8 @@ export function PriceChart({ series, dec = 1, axis = false, grid = true, entry, 
     const y = (v: number) => top + ((hi - v) / (hi - lo)) * (bot - top);
     const step = plotW / (series.length - 1);
 
-    ctx.font = `11px ${C.mono}`;
+    ctx.font = `500 11px ${C.mono}`;
+    if ("fontVariantNumeric" in ctx) (ctx as CanvasRenderingContext2D & { fontVariantNumeric?: string }).fontVariantNumeric = "tabular-nums";
     if (grid) {
       const st = niceStep(hi - lo);
       ctx.textAlign = "right";

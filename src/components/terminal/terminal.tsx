@@ -185,6 +185,7 @@ export function Terminal() {
     [sim.series.length, sim.iv],
   );
 
+  const card = "overflow-hidden rounded-lg border border-border bg-card";
   const big = (n: number) => (n >= 1e9 ? `$${fmt(n / 1e9, 2)}B` : `$${fmt(n / 1e6, 1)}M`);
 
   return (
@@ -214,7 +215,7 @@ export function Terminal() {
             Momentum book <span className="type-label text-muted-foreground">$25K</span>
           </span>
           <ThemeToggle />
-          <Button size="sm" onClick={() => pushToasts([{ title: "Wallet 0x7f3a…9b21", body: "Connected (demo)" }])}>
+          <Button size="sm" variant="inverse" onClick={() => pushToasts([{ title: "Wallet 0x7f3a…9b21", body: "Connected (demo)" }])}>
             0x7f3a…9b21
           </Button>
         </div>
@@ -222,16 +223,17 @@ export function Terminal() {
 
       <div
         className={cn(
-          "grid flex-1 grid-cols-[minmax(0,1fr)] xl:min-h-0 xl:overflow-hidden",
+          // Panels are separate cards on the page ground with 8px gaps (Figma terminal, Nov 2026).
+          "grid flex-1 grid-cols-[minmax(0,1fr)] gap-2 p-2 xl:min-h-0 xl:overflow-hidden xl:p-0 xl:pt-0",
           "md:grid-cols-[minmax(0,1fr)_340px]",
-          "xl:grid-cols-[minmax(0,1fr)_300px_360px] xl:grid-rows-[56px_minmax(0,1fr)_5px_var(--bottom-h)]",
+          "xl:grid-cols-[minmax(0,1fr)_300px_360px] xl:grid-rows-[98px_minmax(0,1fr)_var(--bottom-h)]",
         )}
         style={{ "--bottom-h": `${bottomH}px` } as React.CSSProperties}
       >
         {/* asset bar */}
-        <div className="col-span-full flex h-14 items-center gap-6 overflow-x-auto border-b border-border px-4 [scrollbar-width:none] xl:col-span-2">
+        <div className={cn(card, "col-span-full flex h-20 items-center gap-7 overflow-x-auto px-4 [scrollbar-width:none] xl:col-span-2 xl:h-auto")}>
           <Menu.Root>
-            <Menu.Trigger className="flex shrink-0 items-center gap-2 py-1.5 type-stat-lg text-base font-semibold text-foreground">
+            <Menu.Trigger className="flex shrink-0 items-center gap-2 py-1.5 font-sans text-2xl font-medium tracking-tight text-foreground">
               {sim.cur}-PERP <ChevronDown className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
             </Menu.Trigger>
             <Menu.Portal>
@@ -277,15 +279,15 @@ export function Terminal() {
         </div>
 
         {/* chart */}
-        <section aria-label="Price chart" className="flex h-[380px] flex-col border-b border-border md:border-r xl:h-auto xl:min-h-0">
-          <div className="flex h-8 shrink-0 items-center border-b border-border" role="group" aria-label="Chart interval">
+        <section aria-label="Price chart" className={cn(card, "flex h-[380px] flex-col xl:h-auto xl:min-h-0")}>
+          <div className="flex h-10 shrink-0 items-center gap-1 border-b border-border px-1" role="group" aria-label="Chart interval">
             {INTERVALS.map((iv) => (
               <button
                 key={iv}
                 type="button"
                 aria-pressed={sim.iv === iv}
                 onClick={() => setSim((s) => withMarket(s, s.cur, iv as Interval, rand.current))}
-                className="h-full px-3 type-label text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground aria-pressed:text-primary"
+                className="h-[30px] rounded-md px-3 type-label text-muted-foreground transition-[color,background-color] duration-150 ease-out hover:text-foreground aria-pressed:bg-brand-bright aria-pressed:text-card"
               >
                 {iv}
               </button>
@@ -306,7 +308,7 @@ export function Terminal() {
         </section>
 
         {/* order book */}
-        <section aria-label="Order book" className="flex h-[420px] min-h-0 flex-col overflow-hidden border-b border-border md:col-start-1 md:border-r xl:col-start-auto xl:h-auto">
+        <section aria-label="Order book" className={cn(card, "flex h-[420px] min-h-0 flex-col md:col-start-1 xl:col-start-auto xl:h-auto")}>
           <Tabs defaultValue="book" className="flex min-h-0 flex-1 flex-col">
             <div className="flex items-center pr-3">
               <TabsList className="flex-1">
@@ -361,7 +363,7 @@ export function Terminal() {
         {/* order rail */}
         <aside
           aria-label="Place order"
-          className="border-b border-border bg-card md:col-start-2 md:row-span-2 md:row-start-2 md:border-l xl:col-start-3 xl:row-span-4 xl:row-start-1 xl:overflow-y-auto xl:overscroll-contain"
+          className={cn(card, "md:col-start-2 md:row-span-2 md:row-start-2 xl:col-start-3 xl:row-span-3 xl:row-start-1 xl:overflow-y-auto xl:overscroll-contain")}
         >
           <form onSubmit={submit} noValidate className="flex flex-col gap-3 border-b border-border px-4 pb-4">
             <Tabs value={type} onValueChange={(t) => { setType(t as "market" | "limit"); if (t === "limit" && !price) setPrice(m.px.toFixed(m.dec)); }}>
@@ -443,7 +445,7 @@ export function Terminal() {
               <Metric label="Fees (0.04%)" value={v.ok ? usd(v.fee) : "—"} />
             </dl>
 
-            <Button type="submit" size="lg" variant={side === "long" ? "positive" : "destructive"} disabled={!!sim.breached} className="w-full">
+            <Button type="submit" size="lg" variant="inverse" disabled={!!sim.breached} className="w-full">
               {side === "long" ? "Buy / Long" : "Sell / Short"} {sim.cur}
               {type === "limit" ? " · Limit" : ""}
             </Button>
@@ -477,35 +479,34 @@ export function Terminal() {
           </div>
         </aside>
 
-        {/* resize divider (desktop) */}
-        <div
-          role="separator"
-          aria-orientation="horizontal"
-          aria-label="Resize positions panel"
-          aria-valuenow={bottomH}
-          tabIndex={0}
-          className="hidden cursor-row-resize touch-none border-t border-border transition-[background-color] duration-150 ease-out hover:bg-accent focus-visible:bg-accent xl:col-span-2 xl:block"
-          onKeyDown={(e) => {
-            if (e.key === "ArrowUp") setBottomH((h) => Math.min(window.innerHeight * 0.6, h + 20));
-            if (e.key === "ArrowDown") setBottomH((h) => Math.max(120, h - 20));
-          }}
-          onPointerDown={(e) => {
-            const startY = e.clientY;
-            const startH = bottomH;
-            const el = e.currentTarget;
-            el.setPointerCapture(e.pointerId);
-            const move = (ev: PointerEvent) => setBottomH(Math.max(120, Math.min(window.innerHeight * 0.6, startH - (ev.clientY - startY))));
-            const up = () => {
-              el.removeEventListener("pointermove", move);
-              el.removeEventListener("pointerup", up);
-            };
-            el.addEventListener("pointermove", move);
-            el.addEventListener("pointerup", up);
-          }}
-        />
-
         {/* positions / orders / history */}
-        <section aria-label="Account activity" className="col-span-full flex min-h-64 flex-col md:col-span-2 xl:col-span-2 xl:min-h-0">
+        <section aria-label="Account activity" className={cn(card, "relative col-span-full flex min-h-64 flex-col md:col-span-2 xl:col-span-2 xl:min-h-0")}>
+          {/* resize handle on the card's top edge (desktop) */}
+          <div
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize positions panel"
+            aria-valuenow={bottomH}
+            tabIndex={0}
+            className="absolute inset-x-0 top-0 z-10 hidden h-1.5 cursor-row-resize touch-none transition-[background-color] duration-150 ease-out hover:bg-accent focus-visible:bg-accent xl:block"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowUp") setBottomH((h) => Math.min(window.innerHeight * 0.6, h + 20));
+              if (e.key === "ArrowDown") setBottomH((h) => Math.max(120, h - 20));
+            }}
+            onPointerDown={(e) => {
+              const startY = e.clientY;
+              const startH = bottomH;
+              const el = e.currentTarget;
+              el.setPointerCapture(e.pointerId);
+              const move = (ev: PointerEvent) => setBottomH(Math.max(120, Math.min(window.innerHeight * 0.6, startH - (ev.clientY - startY))));
+              const up = () => {
+                el.removeEventListener("pointermove", move);
+                el.removeEventListener("pointerup", up);
+              };
+              el.addEventListener("pointermove", move);
+              el.addEventListener("pointerup", up);
+            }}
+          />
           <Tabs value={bottom} onValueChange={(t) => setBottom(t as typeof bottom)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex items-center gap-2 border-b border-border pr-2">
               <TabsList className="min-w-0 flex-1 overflow-x-auto border-b-0 [scrollbar-width:none]">
@@ -678,7 +679,7 @@ function Metric({ label, value, className }: { label: string; value: string; cla
 
 function Count({ n }: { n: number }) {
   return (
-    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center rounded-sm border px-1 font-mono text-[10px] tracking-normal", n > 0 ? "border-brand-line bg-accent text-primary" : "border-input text-muted-foreground")}>
+    <span className={cn("inline-flex h-4 min-w-4 items-center justify-center rounded-sm border px-1 type-data-sm tracking-normal", n > 0 ? "border-primary bg-primary text-primary-foreground" : "border-input text-muted-foreground")}>
       {n}
     </span>
   );

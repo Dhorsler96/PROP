@@ -27,6 +27,8 @@ export const buttonVariants = cva(
         ghost: "border-transparent bg-transparent text-muted-foreground hover:text-foreground",
         destructive: "type-button border-destructive bg-destructive text-background hover:opacity-90",
         positive: "type-button border-positive bg-positive text-background hover:opacity-90",
+        /** White in Dark, ink in Light: the order submit and wallet buttons. */
+        inverse: "type-button border-foreground bg-foreground text-background hover:opacity-90",
         link: "h-auto border-transparent px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -45,7 +47,7 @@ type Shared = VariantProps<typeof buttonVariants> & {
 };
 
 function Content({ children, shortcut, variant }: { children: React.ReactNode } & Shared) {
-  const onFill = variant === "default" || variant === "destructive" || variant === "positive";
+  const onFill = variant === "default" || variant === "destructive" || variant === "positive" || variant === "inverse";
   return (
     <>
       {children}

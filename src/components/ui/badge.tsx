@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /** shadcn <Badge> with Hyperprop positive / warning variants for account state. */
 export const badgeVariants = cva(
-  "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 type-label whitespace-nowrap",
+  "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 type-label whitespace-nowrap",
   {
     variants: {
       variant: {
@@ -13,7 +13,7 @@ export const badgeVariants = cva(
         outline: "border-input text-foreground",
         destructive: "border-destructive bg-neg-wash text-destructive",
         positive: "border-positive bg-pos-wash text-positive",
-        warning: "border-warning bg-warn-wash text-warning",
+        warning: "border-transparent bg-warning/30 text-warning",
       },
     },
     defaultVariants: { variant: "default" },

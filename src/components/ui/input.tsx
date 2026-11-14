@@ -24,7 +24,7 @@ export function Input({ className, ...props }: React.ComponentProps<"input">) {
     <input
       data-slot="input"
       className={cn(
-        "min-w-0 flex-1 bg-transparent px-3 font-mono text-base tabular-nums text-foreground outline-none sm:text-sm",
+        "min-w-0 flex-1 bg-transparent px-3 font-sans text-base tabular-nums tracking-[0.02em] text-foreground outline-none sm:text-sm",
         "placeholder:text-muted-foreground/70 disabled:cursor-not-allowed",
         className,
       )}
