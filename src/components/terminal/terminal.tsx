@@ -284,18 +284,17 @@ export function Terminal() {
 
         {/* chart */}
         <section aria-label="Price chart" className={cn(card, "flex h-[380px] flex-col xl:h-auto xl:min-h-0")}>
-          <div className="flex h-10 shrink-0 items-center gap-1 border-b border-border px-1" role="group" aria-label="Chart interval">
-            {INTERVALS.map((iv) => (
-              <button
-                key={iv}
-                type="button"
-                aria-pressed={sim.iv === iv}
-                onClick={() => setSim((s) => withMarket(s, s.cur, iv as Interval, rand.current))}
-                className="h-[30px] rounded-md px-3 type-label text-muted-foreground transition-[color,background-color,scale] duration-150 ease-out hover:text-foreground aria-pressed:bg-brand-bright aria-pressed:text-card motion-safe:active:scale-[0.96]"
-              >
-                {iv}
-              </button>
-            ))}
+          <div className="flex h-10 shrink-0 items-center border-b border-border">
+            {/* Intervals use the shared Tabs so the active pill glides between them. */}
+            <Tabs value={sim.iv} onValueChange={(iv) => setSim((s) => withMarket(s, s.cur, iv as Interval, rand.current))}>
+              <TabsList aria-label="Chart interval" className="border-b-0">
+                {INTERVALS.map((iv) => (
+                  <TabsTrigger key={iv} value={iv}>
+                    {iv}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
             <span className="ml-auto px-3 type-data-sm text-muted-foreground">
               {hover ? `${hover.time} · ${fmt(hover.price, m.dec)}` : `${sim.cur}-PERP · ${sim.iv}`}
             </span>
