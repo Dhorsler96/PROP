@@ -231,7 +231,7 @@ export function Terminal() {
       <div
         className={cn(
           // Panels are separate cards on the page ground with 8px gaps (Figma terminal, Nov 2026).
-          "grid flex-1 grid-cols-[minmax(0,1fr)] gap-2 p-2 xl:min-h-0 xl:overflow-hidden xl:p-0 xl:pt-0",
+          "grid flex-1 grid-cols-[minmax(0,1fr)] gap-2 p-2 xl:min-h-0 xl:overflow-hidden xl:px-2 xl:pt-0 xl:pb-2",
           "md:grid-cols-[minmax(0,1fr)_340px]",
           "xl:grid-cols-[minmax(0,1fr)_300px_360px] xl:grid-rows-[98px_minmax(0,1fr)_var(--bottom-h)]",
         )}
