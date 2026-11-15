@@ -8,7 +8,7 @@ export function Hero() {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-border">
       {/* Live Bloom backplate: chart lines that swell into a flower, drawn by the /bloom shader. */}
-      <BloomPlate src="/bloom/hero-threshold.webp" aspect={16 / 9} className="pointer-events-none absolute inset-0 size-full" />
+      <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} className="pointer-events-none absolute inset-0 size-full" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_45%,color-mix(in_srgb,var(--background)_70%,transparent)_0%,transparent_100%)]" />
 
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-28 text-center sm:px-8 md:py-40">

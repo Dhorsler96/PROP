@@ -43,18 +43,19 @@ export function BloomPlate({ src, aspect, className }: { src: string; aspect: nu
       gl.uniform2f(u.uPos, 0, 0);
       gl.uniform1f(u.uTime, reduced ? 0 : (now - start) / 1000);
       gl.uniform1f(u.uSeed, 7);
-      gl.uniform1f(u.uScale, 1);
+      // Fit the whole flower to the plate height rather than covering its width.
+      gl.uniform1f(u.uScale, Math.min(1, (r.height / r.width) * 1.08));
       // About one line every 9.5 CSS px, whatever the plate's size.
       gl.uniform1f(u.uCols, Math.min(r.width, r.height) / 9.5);
       gl.uniform1f(u.uDash, 0.14);
       gl.uniform1f(u.uGrain, 0.5);
-      gl.uniform1f(u.uInk, light ? 0.08 : 0.11);
+      gl.uniform1f(u.uInk, light ? 0.1 : 0.16);
       gl.uniform1f(u.uStem, 0);
       gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / 2200));
       gl.uniform1f(u.uMode, 1);
       gl.uniform1f(u.uImgAspect, aspect);
-      gl.uniform1f(u.uThresh, 0.72);
-      gl.uniform1f(u.uGain, 1.7);
+      gl.uniform1f(u.uThresh, 0.64);
+      gl.uniform1f(u.uGain, 3);
       gl.uniform1f(u.uInvert, 0);
       gl.uniform1i(u.uImg, 0);
       gl.uniform3fv(u.uBg, hexRgb(css.getPropertyValue("--hp-bg-page") || "#14120b"));
