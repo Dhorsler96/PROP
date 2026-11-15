@@ -1,15 +1,49 @@
 "use client";
 
 import { ArrowLink, CtaLink } from "@/components/ui/cta";
-import { BloomPlate } from "@/components/bloom/bloom-plate";
+import { useEffect, useState } from "react";
+import { BloomPlate, PLATE_DEFAULTS, type PlateSettings } from "@/components/bloom/bloom-plate";
+import { PlateTweaker } from "@/components/bloom/plate-tweaker";
 import { fmt } from "@/lib/utils";
 
+const STORE = "prop:hero-plate";
+
 export function Hero() {
+  const [plate, setPlate] = useState<PlateSettings>(PLATE_DEFAULTS);
+  const [tweak, setTweak] = useState(false);
+
+  // ?tweak in the URL shows the live controls; saved tweaks load in this browser.
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      const on = new URLSearchParams(window.location.search).has("tweak");
+      setTweak(on);
+      if (!on) return;
+      try {
+        const saved = localStorage.getItem(STORE);
+        if (saved) setPlate({ ...PLATE_DEFAULTS, ...JSON.parse(saved) });
+      } catch {
+        /* storage unavailable */
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const update = (v: PlateSettings) => {
+    setPlate(v);
+    try {
+      localStorage.setItem(STORE, JSON.stringify(v));
+    } catch {
+      /* storage unavailable */
+    }
+  };
+
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-border">
       {/* Live Bloom backplate: chart lines that swell into a flower, drawn by the /bloom shader. */}
-      <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} className="pointer-events-none absolute inset-0 size-full" />
+      <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} settings={plate} className="pointer-events-none absolute inset-0 size-full" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_45%,color-mix(in_srgb,var(--background)_70%,transparent)_0%,transparent_100%)]" />
+
+      {tweak ? <PlateTweaker value={plate} onChange={update} /> : null}
 
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-28 text-center sm:px-8 md:py-40">
         <p className="enter type-eyebrow text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>

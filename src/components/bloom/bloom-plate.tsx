@@ -10,9 +10,56 @@ import { hexRgb, initBloom, uploadThreshold } from "./gl";
  * frame under reduced motion, and stays hidden (showing whatever sits beneath it)
  * if WebGL or the threshold image is unavailable.
  */
-export function BloomPlate({ src, aspect, className }: { src: string; aspect: number; className?: string }) {
+export type PlateSettings = {
+  /** 1 fits the whole flower to the plate height; higher zooms in. */
+  zoom: number;
+  x: number;
+  y: number;
+  /** Brightness that counts as a thick line. Higher shows fewer, brighter edges. */
+  threshold: number;
+  /** How sharply lines split between thin and thick. */
+  contrast: number;
+  /** CSS px per line. */
+  spacing: number;
+  /** How far lines stand out from the ground, 0 to 1. */
+  ink: number;
+  /** Motion speed; 0 holds still. */
+  motion: number;
+  grain: number;
+};
+
+export const PLATE_DEFAULTS: PlateSettings = {
+  zoom: 1.55,
+  x: 0,
+  y: 0,
+  threshold: 0.62,
+  contrast: 3,
+  spacing: 9.5,
+  ink: 0.16,
+  motion: 1,
+  grain: 0.5,
+};
+
+export function BloomPlate({
+  src,
+  aspect,
+  settings = PLATE_DEFAULTS,
+  className,
+}: {
+  src: string;
+  aspect: number;
+  settings?: PlateSettings;
+  className?: string;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
+  // The frame loop reads settings through a ref so tweaks apply without restarting WebGL.
+  const settingsRef = useRef(settings);
+  const kickRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    settingsRef.current = settings;
+    kickRef.current();
+  }, [settings]);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -36,26 +83,26 @@ export function BloomPlate({ src, aspect, className }: { src: string; aspect: nu
         canvas.width = w;
         canvas.height = h;
       }
+      const st = settingsRef.current;
       const css = getComputedStyle(document.documentElement);
       const light = document.documentElement.getAttribute("data-theme") === "light";
       gl.viewport(0, 0, w, h);
       gl.uniform2f(u.uRes, w, h);
-      gl.uniform2f(u.uPos, 0, 0);
-      gl.uniform1f(u.uTime, reduced ? 0 : (now - start) / 1000);
+      gl.uniform2f(u.uPos, st.x, st.y);
+      gl.uniform1f(u.uTime, reduced ? 0 : ((now - start) / 1000) * st.motion);
       gl.uniform1f(u.uSeed, 7);
-      // Fit the whole flower to the plate height rather than covering its width.
-      gl.uniform1f(u.uScale, Math.min(1, (r.height / r.width) * 1.08));
-      // About one line every 9.5 CSS px, whatever the plate's size.
-      gl.uniform1f(u.uCols, Math.min(r.width, r.height) / 9.5);
+      // zoom 1 fits the whole flower to the plate height rather than covering its width.
+      gl.uniform1f(u.uScale, Math.min(1, r.height / r.width) * st.zoom);
+      gl.uniform1f(u.uCols, Math.min(r.width, r.height) / st.spacing);
       gl.uniform1f(u.uDash, 0.14);
-      gl.uniform1f(u.uGrain, 0.5);
-      gl.uniform1f(u.uInk, light ? 0.1 : 0.16);
+      gl.uniform1f(u.uGrain, st.grain);
+      gl.uniform1f(u.uInk, light ? st.ink * 0.65 : st.ink);
       gl.uniform1f(u.uStem, 0);
       gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / 2200));
       gl.uniform1f(u.uMode, 1);
       gl.uniform1f(u.uImgAspect, aspect);
-      gl.uniform1f(u.uThresh, 0.64);
-      gl.uniform1f(u.uGain, 3);
+      gl.uniform1f(u.uThresh, st.threshold);
+      gl.uniform1f(u.uGain, st.contrast);
       gl.uniform1f(u.uInvert, 0);
       gl.uniform1i(u.uImg, 0);
       gl.uniform3fv(u.uBg, hexRgb(css.getPropertyValue("--hp-bg-page") || "#14120b"));
@@ -68,6 +115,7 @@ export function BloomPlate({ src, aspect, className }: { src: string; aspect: nu
     const kick = () => {
       if (loaded && !raf) raf = requestAnimationFrame(loop);
     };
+    kickRef.current = kick;
 
     const img = new Image();
     img.onload = () => {
