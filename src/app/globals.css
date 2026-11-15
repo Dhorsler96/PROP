@@ -311,14 +311,6 @@
     background: var(--hp-bg-inset);
   }
 }
-/* Toast enter = the staged-entrance recipe: opacity, 4px blur, 12px rise. */
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-    filter: blur(4px);
-  }
-}
 
 /*
  * Staged entrance (better-ui enter-exit): opacity for everyone; blur + 12px rise only

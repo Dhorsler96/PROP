@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { PriceChart } from "@/components/price-chart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { notify, Toaster } from "@/components/ui/sonner";
 import { Input, InputGroup, InputGroupAddon, Label } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress, SideToggle, Slider, ToggleGroup } from "@/components/ui/misc";
@@ -50,18 +51,8 @@ export function Terminal() {
     simRef.current = v;
     setSimState(v);
   }, []);
-  const [toasts, setToasts] = useState<(Toast & { leaving?: boolean })[]>([]);
-  const toastId = useRef(0);
-
   const pushToasts = useCallback((list: Omit<Toast, "id">[]) => {
-    if (!list.length) return;
-    const withIds = list.map((t) => ({ ...t, id: ++toastId.current }));
-    setToasts((cur) => [...cur, ...withIds].slice(-4));
-    // Exit is shorter and smaller than the enter (better-ui): mark leaving, fade up 150ms, then remove.
-    for (const t of withIds) {
-      window.setTimeout(() => setToasts((cur) => cur.map((x) => (x.id === t.id ? { ...x, leaving: true } : x))), 3450);
-      window.setTimeout(() => setToasts((cur) => cur.filter((x) => x.id !== t.id)), 3600);
-    }
+    for (const t of list) notify(t);
   }, []);
 
   // Live simulation starts after mount so the first render matches the server.
@@ -669,29 +660,7 @@ export function Terminal() {
         </section>
       </div>
 
-      {/* toasts (Sonner-style) */}
-      <div role="status" aria-live="polite" className="pointer-events-none fixed right-4 bottom-4 z-50 flex w-[min(356px,calc(100vw-2rem))] flex-col gap-2">
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={cn(
-              "rounded-lg border border-input bg-popover px-3.5 py-2.5 shadow-pop",
-              "motion-safe:animate-[toast-in_300ms_ease-out] motion-reduce:animate-[enter-fade_200ms_ease-out]",
-              "transition-[opacity,translate,filter] duration-150 ease-out",
-              t.leaving && "opacity-0 motion-safe:-translate-y-3 motion-safe:blur-[4px]",
-            )}
-          >
-            <p className="flex items-center gap-2 type-data text-foreground">
-              <span
-                aria-hidden
-                className={cn("size-1.5 shrink-0 rounded-full", t.tone === "pos" ? "bg-positive" : t.tone === "neg" ? "bg-destructive" : "bg-primary")}
-              />
-              {t.title}
-            </p>
-            {t.body ? <p className="type-body-sm text-secondary-text">{t.body}</p> : null}
-          </div>
-        ))}
-      </div>
+      <Toaster />
     </div>
   );
 }
