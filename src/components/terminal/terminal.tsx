@@ -196,7 +196,7 @@ export function Terminal() {
   return (
     <div className="flex min-h-dvh flex-col xl:h-dvh">
       {/* header */}
-      <header className="flex h-12 shrink-0 items-center gap-3 border-b border-input px-4 sm:gap-6 sm:px-6">
+      <header className="flex h-12 shrink-0 items-center gap-3 px-4 sm:gap-6 sm:px-6">
         <Link href="/" aria-label="Hyperprop home" className="shrink-0">
           <Logo className="h-4 w-auto" />
         </Link>
