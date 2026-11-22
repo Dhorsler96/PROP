@@ -23,13 +23,13 @@ export const buttonVariants = cva(
         default:
           "border-primary bg-primary text-primary-foreground hover:border-brand-bright hover:bg-brand-bright",
         secondary: "border-border bg-secondary text-secondary-foreground hover:border-input",
-        outline: "border-input bg-transparent text-foreground hover:border-primary hover:text-primary",
+        outline: "border-input bg-transparent text-foreground hover:border-primary hover:text-brand-text",
         ghost: "border-transparent bg-transparent text-muted-foreground hover:text-foreground",
         destructive: "border-destructive bg-destructive text-background hover:opacity-90",
         positive: "border-positive bg-positive text-background hover:opacity-90",
         /** White in Dark, ink in Light: the order submit and wallet buttons. */
         inverse: "border-foreground bg-foreground text-background hover:opacity-90",
-        link: "h-auto border-transparent px-0 text-primary underline-offset-4 hover:underline",
+        link: "h-auto border-transparent px-0 text-brand-text underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-8 px-3",

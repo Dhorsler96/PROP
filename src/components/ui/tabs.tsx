@@ -43,7 +43,7 @@ export function TabsList({ className, children, ...props }: TabsPrimitive.List.P
         aria-hidden
         className={cn(
           "absolute top-(--active-tab-top) left-0 -z-10 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left)",
-          "rounded-md bg-brand-bright opacity-0 group-data-[ready=true]/tabs:opacity-100",
+          "rounded-md bg-primary opacity-0 group-data-[ready=true]/tabs:opacity-100",
           "group-data-[ready=true]/tabs:motion-safe:transition-[translate,width]",
           GLIDE,
         )}
@@ -61,9 +61,9 @@ export function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "inline-flex h-[30px] items-center gap-1.5 rounded-md px-3 type-label whitespace-nowrap text-muted-foreground",
         "transition-[color,scale]",
         GLIDE,
-        "hover:text-foreground data-active:text-card data-active:hover:text-card motion-safe:active:scale-[0.96]",
+        "hover:text-foreground data-active:text-primary-foreground data-active:hover:text-primary-foreground motion-safe:active:scale-[0.96]",
         // Static pill until the sliding indicator is ready.
-        "group-data-[ready=false]/tabs:data-active:bg-brand-bright",
+        "group-data-[ready=false]/tabs:data-active:bg-primary",
         className,
       )}
       {...props}

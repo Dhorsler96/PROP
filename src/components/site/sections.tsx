@@ -3,9 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLink, CtaLink } from "@/components/ui/cta";
 import { Kbd } from "@/components/ui/kbd";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Progress } from "@/components/ui/misc";
-import { rng } from "@/lib/market";
 import { marketsLabel, marketsPhrase } from "@/lib/venue";
 import { TerminalPreview } from "./terminal-preview";
+import { BloomPlate } from "@/components/bloom/bloom-plate";
+import { PLATE_DEFAULTS, type PlateSettings } from "@/components/bloom/plate-settings";
+
+const CLOSING_PLATE: PlateSettings = { ...PLATE_DEFAULTS, zoom: 2.6, x: 0.35, y: -0.15, threshold: 0.6 };
 
 function SectionHead({ eyebrow, title, id, children, small }: { eyebrow: string; title: string; id: string; children?: React.ReactNode; small?: boolean }) {
   return (
@@ -125,7 +128,7 @@ export function TerminalSection() {
       <div className={wrap}>
         <div className="grid overflow-hidden rounded-2xl border border-border lg:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-b border-border p-6 sm:p-12 lg:border-r lg:border-b-0">
-            <p className="type-eyebrow text-primary">
+            <p className="type-eyebrow text-brand-text">
               <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
               Settled on-chain
             </p>
@@ -184,28 +187,16 @@ export function Faq() {
 }
 
 export function Closing() {
-  // Deterministic "number field" texture behind the closing CTA.
-  const r = rng(5);
-  const cols = Array.from({ length: 16 }, () =>
-    Array.from({ length: 22 }, () => (r() < 0.5 ? "" : (r() * 99999).toFixed(1))),
-  );
   return (
     <section aria-labelledby="closing-title" className="relative overflow-hidden border-b border-border">
-      <div aria-hidden className="pointer-events-none absolute inset-0 flex justify-between px-6 font-mono text-[10px] leading-[22px] text-primary opacity-25 select-none">
-        {cols.map((c, i) => (
-          <div key={i} className="flex flex-col">
-            {c.map((v, j) => (
-              <span key={j} style={{ opacity: v ? 0.25 + ((i * 7 + j * 3) % 10) / 14 : 0 }}>
-                {v || "0"}
-              </span>
-            ))}
-          </div>
-        ))}
+      {/* Brand pattern: the Bloom line plate, cropped into a different part of the marigold than the hero. */}
+      <div aria-hidden className="hero-plate pointer-events-none absolute inset-0">
+        <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} settings={CLOSING_PLATE} className="size-full" />
       </div>
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,var(--background)_10%,transparent_100%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_45%_55%_at_50%_50%,color-mix(in_srgb,var(--background)_75%,transparent)_0%,transparent_100%)]" />
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-32 text-center sm:px-8">
         <h2 id="closing-title" className="type-statement">
-          Prove it. <span className="text-primary">Get funded.</span>
+          Prove it. <span className="text-brand-text">Get funded.</span>
         </h2>
         <p className="type-body-md text-secondary-text">One evaluation between you and up to $100,000 of trading capital.</p>
         <CtaLink href="/#pricing">

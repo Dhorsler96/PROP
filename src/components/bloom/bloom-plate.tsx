@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { hexRgb, initBloom, uploadThreshold } from "./gl";
+import { PLATE_DEFAULTS, type PlateSettings } from "./plate-settings";
 
 /**
  * A live Bloom backplate: the same shader as /bloom, drawn behind content.
@@ -10,35 +11,7 @@ import { hexRgb, initBloom, uploadThreshold } from "./gl";
  * frame under reduced motion, and stays hidden (showing whatever sits beneath it)
  * if WebGL or the threshold image is unavailable.
  */
-export type PlateSettings = {
-  /** 1 fits the whole flower to the plate height; higher zooms in. */
-  zoom: number;
-  x: number;
-  y: number;
-  /** Brightness that counts as a thick line. Higher shows fewer, brighter edges. */
-  threshold: number;
-  /** How sharply lines split between thin and thick. */
-  contrast: number;
-  /** CSS px per line. */
-  spacing: number;
-  /** How far lines stand out from the ground, 0 to 1. */
-  ink: number;
-  /** Motion speed; 0 holds still. */
-  motion: number;
-  grain: number;
-};
-
-export const PLATE_DEFAULTS: PlateSettings = {
-  zoom: 1.55,
-  x: 0,
-  y: 0,
-  threshold: 0.62,
-  contrast: 3,
-  spacing: 9.5,
-  ink: 0.16,
-  motion: 1,
-  grain: 0.5,
-};
+export { PLATE_DEFAULTS, type PlateSettings } from "./plate-settings";
 
 export function BloomPlate({
   src,

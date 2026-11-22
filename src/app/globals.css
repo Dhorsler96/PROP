@@ -10,7 +10,7 @@
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  /* Brand #7297f6. Warm neutrals after Cursor: #14120b ground, #edecec text, surfaces = text mixed in at 3–18% */
+  /* Brand #4566fa (fills); #7b92fb tint for brand-coloured text, since #4566fa is under 4.5:1 on these grounds. Warm neutrals after Cursor: #14120b ground, #edecec text, surfaces = text mixed in at 3–18% */
   --hp-bg-page: #14120b;
   --hp-bg-surface: #1b1816;
   --hp-bg-raised: #1f1d16;
@@ -19,17 +19,18 @@
   --hp-bg-inset: #edecec0f;
   --hp-line-hair: #2e2c26;
   --hp-line-strong: #3b3934;
-  --hp-line-brand: #7297f659;
+  --hp-line-brand: #4566fa66;
   --hp-text-primary: #edecec;
   --hp-text-secondary: #acaba8;
   --hp-text-muted: #8b8a87;
   --hp-text-disabled: #edecec52;
-  --hp-brand: #7297f6;
-  --hp-brand-bright: #88abff;
-  --hp-brand-wash: #7297f614;
-  --hp-brand-wash-strong: #7297f629;
-  --hp-on-brand: #14120b;
-  --hp-cta-glow: #b3c8ff;
+  --hp-brand: #4566fa;
+  --hp-brand-bright: #3654f5;
+  --hp-brand-text: #7b92fb;
+  --hp-brand-wash: #4566fa1a;
+  --hp-brand-wash-strong: #4566fa33;
+  --hp-on-brand: #ffffff;
+  --hp-cta-glow: #7a90ff;
   --hp-ink: #edecec;
   --hp-pos: #8dcd8e;
   --hp-pos-wash: #8dcd8e1a;
@@ -43,7 +44,7 @@
 [data-theme="light"] {
   color-scheme: light;
   /* Neutral near-white after devin.ai: #fcfcfc ground, white cards, black-alpha lines, #191919 ink.
-     Brand #4768c3 (#7297f6 deepened to pass 4.5:1 on the ground). Greys deepened from Devin's 56%
+     Brand #4566fa: passes 4.5:1 as text on the ground and white on it; a deeper #3a59ee for text on tinted panels. Greys deepened from Devin's 56%
      alpha (#7b7b7b) so body copy still clears 4.5:1. */
   --hp-bg-page: #fcfcfc;
   --hp-bg-surface: #ffffff;
@@ -53,17 +54,18 @@
   --hp-bg-inset: #0000000a;
   --hp-line-hair: #ebebeb;
   --hp-line-strong: #dedede;
-  --hp-line-brand: #4768c359;
+  --hp-line-brand: #4566fa59;
   --hp-text-primary: #191919;
   --hp-text-secondary: #5e5e5e;
   --hp-text-muted: #6e6e6e;
   --hp-text-disabled: #19191952;
-  --hp-brand: #4768c3;
-  --hp-brand-bright: #3553ac;
-  --hp-brand-wash: #4768c314;
-  --hp-brand-wash-strong: #4768c324;
+  --hp-brand: #4566fa;
+  --hp-brand-bright: #3654f5;
+  --hp-brand-text: #3a59ee;
+  --hp-brand-wash: #4566fa14;
+  --hp-brand-wash-strong: #4566fa24;
   --hp-on-brand: #ffffff;
-  --hp-cta-glow: #2c4797;
+  --hp-cta-glow: #2a44c9;
   --hp-ink: #191919;
   --hp-pos: #3e7c42;
   --hp-pos-wash: #3e7c4214;
@@ -132,6 +134,7 @@
   --color-inset: var(--hp-bg-inset);
   --color-secondary-text: var(--hp-text-secondary);
   --color-brand-bright: var(--hp-brand-bright);
+  --color-brand-text: var(--hp-brand-text);
   --color-brand-line: var(--hp-line-brand);
   --color-pos-wash: var(--hp-pos-wash);
   --color-neg-wash: var(--hp-neg-wash);

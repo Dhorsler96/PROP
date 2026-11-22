@@ -67,7 +67,7 @@ export function Pricing() {
                           )}
                         >
                           <span className="type-stat-xl text-foreground">{short(s)}</span>
-                          <span className={cn("type-label", on ? "text-primary" : "text-muted-foreground")}>{on ? "Selected" : "Select"}</span>
+                          <span className={cn("type-label", on ? "text-brand-text" : "text-muted-foreground")}>{on ? "Selected" : "Select"}</span>
                         </button>
                       </th>
                     );
@@ -85,7 +85,7 @@ export function Pricing() {
                       return (
                         <td key={s} className={cn("h-13 border-border text-center", ri < rows.length - 1 && "border-b", i < 4 && "border-r", on && "bg-accent")}>
                           {r.fee ? (
-                            <span className={cn("type-stat-lg", on ? "text-primary" : "text-foreground")}>
+                            <span className={cn("type-stat-lg", on ? "text-brand-text" : "text-foreground")}>
                               {r.value(s, i)}
                               <span className="ml-1 type-label text-muted-foreground">USDC</span>
                             </span>
@@ -114,7 +114,7 @@ export function Pricing() {
               ))}
               <div className="flex flex-col gap-1">
                 <dt className="type-label text-muted-foreground">Total due</dt>
-                <dd className="type-stat-lg text-primary" aria-live="polite">
+                <dd className="type-stat-lg text-brand-text" aria-live="polite">
                   {fmt(FEES[split][tier], 0)} USDC
                 </dd>
               </div>

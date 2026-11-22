@@ -12,7 +12,7 @@ import { hexRgb, initBloom, uploadThreshold, type BloomGl } from "./gl";
 // Backplate grounds. Bars are drawn tone on tone, so one colour defines a plate.
 const PALETTES = {
   clay: { label: "Clay", bg: "#e8853d" },
-  brand: { label: "Brand", bg: "#7297f6" },
+  brand: { label: "Brand", bg: "#4566fa" },
   growth: { label: "Growth", bg: "#8dcd8e" },
   paper: { label: "Paper", bg: "#f1f1ee" },
   ink: { label: "Ink", bg: "#1b1816" },
@@ -414,7 +414,7 @@ function Switch({ on, onChange, children }: { on: boolean; onChange: (v: boolean
       onClick={() => onChange(!on)}
       className={cn(
         "flex h-8 flex-1 items-center justify-center gap-2 rounded-md border type-label transition-[background-color,border-color,color,scale] duration-150 ease-out motion-safe:active:scale-[0.96]",
-        on ? "border-primary bg-accent text-primary" : "border-input text-muted-foreground hover:text-foreground",
+        on ? "border-primary bg-accent text-brand-text" : "border-input text-muted-foreground hover:text-foreground",
       )}
     >
       <span aria-hidden className={cn("size-1.5 rounded-full", on ? "bg-primary" : "bg-input")} />

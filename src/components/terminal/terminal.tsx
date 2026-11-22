@@ -246,8 +246,8 @@ export function Terminal() {
                         key={k}
                         onClick={() => setMarket(k)}
                         className={cn(
-                          "grid cursor-default grid-cols-[1fr_auto_auto] gap-4 rounded-sm px-2.5 py-2 type-data outline-none data-highlighted:bg-accent data-highlighted:text-primary",
-                          k === sim.cur && "text-primary",
+                          "grid cursor-default grid-cols-[1fr_auto_auto] gap-4 rounded-sm px-2.5 py-2 type-data outline-none data-highlighted:bg-accent data-highlighted:text-brand-text",
+                          k === sim.cur && "text-brand-text",
                         )}
                       >
                         <span>{k}-PERP</span>
@@ -305,7 +305,7 @@ export function Terminal() {
                   onClick={() => setChartMode(k)}
                   className={cn(
                     "grid size-7 place-items-center rounded-md transition-[background-color,color,scale] duration-150 ease-out motion-safe:active:scale-[0.96]",
-                    chartMode === k ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground",
+                    chartMode === k ? "bg-accent text-brand-text" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <Icon className="size-3.5" strokeWidth={1.75} aria-hidden />
@@ -440,7 +440,7 @@ export function Terminal() {
                       const q = Math.floor(maxSize(sim, orderPx, lev) * (p / 100) * 10 ** m.sdec) / 10 ** m.sdec;
                       setSize(q.toFixed(m.sdec));
                     }}
-                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color,scale] duration-150 ease-out first:ml-0 first:rounded-l-md last:rounded-r-md hover:relative hover:border-primary hover:text-primary motion-safe:active:scale-[0.96]"
+                    className="-ml-px h-6 border border-border type-data-sm text-muted-foreground transition-[color,border-color,scale] duration-150 ease-out first:ml-0 first:rounded-l-md last:rounded-r-md hover:relative hover:border-primary hover:text-brand-text motion-safe:active:scale-[0.96]"
                   >
                     {p}%
                   </button>

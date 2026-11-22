@@ -69,7 +69,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionPri
       <AccordionPrimitive.Trigger
         className={cn(
           "group flex w-full items-center justify-between gap-6 py-5 text-left type-body-md text-foreground",
-          "transition-[color] duration-150 ease-out hover:text-primary",
+          "transition-[color] duration-150 ease-out hover:text-brand-text",
           className,
         )}
         {...props}
@@ -77,7 +77,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionPri
         {children}
         <span
           aria-hidden
-          className="relative size-3 shrink-0 text-muted-foreground group-data-panel-open:text-primary"
+          className="relative size-3 shrink-0 text-muted-foreground group-data-panel-open:text-brand-text"
         >
           <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-current" />
           <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current group-data-panel-open:scale-y-0 motion-safe:transition-[scale] motion-safe:duration-150 motion-safe:ease-out" />

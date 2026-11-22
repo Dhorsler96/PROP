@@ -48,7 +48,7 @@ export function Hero() {
       {tweak ? <PlateTweaker value={plate} onChange={update} /> : null}
 
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-28 text-center sm:px-8 md:py-40">
-        <p className="enter type-eyebrow text-primary" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
+        <p className="enter type-eyebrow text-brand-text" style={{ "--enter-delay": "0ms" } as React.CSSProperties}>
           <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
           Decentralized prop trading
         </p>
@@ -72,7 +72,7 @@ export function Hero() {
           ].map(([l, v, accent], i) => (
             <div key={l as string} className={`flex flex-col gap-1 px-4 py-3 text-left sm:px-6 ${i < 2 ? "border-r border-border" : ""}`}>
               <dt className="type-label text-muted-foreground">{l}</dt>
-              <dd className={`type-stat-lg ${accent ? "text-primary" : "text-foreground"}`}>{v}</dd>
+              <dd className={`type-stat-lg ${accent ? "text-brand-text" : "text-foreground"}`}>{v}</dd>
             </div>
           ))}
         </dl>
