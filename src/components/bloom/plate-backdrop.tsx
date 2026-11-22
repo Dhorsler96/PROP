@@ -17,7 +17,7 @@ export function PlateBackdrop({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("relative isolate overflow-hidden rounded-2xl p-4 sm:p-8 lg:p-10", className)}>
+    <div className={cn("relative isolate overflow-hidden rounded-md p-4 sm:p-8 lg:p-10", className)}>
       <BloomPlate
         src="/bloom/marigold.webp"
         aspect={1024 / 1021}

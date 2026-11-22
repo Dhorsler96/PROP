@@ -552,62 +552,66 @@
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
- * Site loader (homepage). The line pattern grows in behind the wordmark, then the
- * cover swipes up with an expo ease (starts at 1.5s, done by ~2.2s) and is hidden.
- * The page's .enter animations are pushed back so they play as the cover lifts.
+ * Site loader (homepage). Colour panels swipe up in turn (130ms apart), the final
+ * panel is the page background with the wordmark, then the cover fades to the page.
+ * Total ~1.9s. The page's .enter animations are pushed back to play as it fades.
  * ─────────────────────────────────────────────────────────────────────────── */
 .site-loader {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   background: var(--background);
   pointer-events: none;
-  animation: loader-swipe 750ms cubic-bezier(0.76, 0, 0.24, 1) 1500ms forwards;
+  animation: loader-fade 450ms ease-out 1450ms forwards;
+}
+.site-loader__panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  translate: 0 100%;
+  animation: loader-panel 560ms cubic-bezier(0.76, 0, 0.24, 1) calc(var(--i) * 130ms) forwards;
+}
+.site-loader__panel--final {
+  background: var(--background);
 }
 .site-loader__logo {
   color: var(--foreground);
   opacity: 0;
-  translate: 0 8px;
-  animation:
-    loader-logo 600ms cubic-bezier(0.16, 1, 0.3, 1) 150ms forwards,
-    loader-logo-out 500ms cubic-bezier(0.7, 0, 0.84, 0) 1500ms forwards;
+  translate: 0 10px;
+  animation: loader-logo 500ms cubic-bezier(0.16, 1, 0.3, 1) 900ms forwards;
+}
+@keyframes loader-panel {
+  to {
+    translate: 0 0;
+  }
 }
 @keyframes loader-logo {
-  from {
-    opacity: 0;
-    translate: 0 8px;
-  }
   to {
     opacity: 1;
     translate: 0 0;
   }
 }
-@keyframes loader-logo-out {
-  from {
-    opacity: 1;
-    translate: 0 0;
-  }
+@keyframes loader-fade {
   to {
     opacity: 0;
-    translate: 0 -24px;
-  }
-}
-@keyframes loader-swipe {
-  to {
-    translate: 0 -100%;
     visibility: hidden;
   }
 }
 .has-loader .enter {
-  animation-delay: calc(var(--enter-delay, 0ms) + 1750ms);
+  animation-delay: calc(var(--enter-delay, 0ms) + 1500ms);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .site-loader {
-    animation: loader-fade 300ms ease-out 700ms forwards;
+    animation: loader-fade 300ms ease-out 600ms forwards;
+  }
+  .site-loader__panel {
+    animation: none;
+  }
+  .site-loader__panel--final {
+    translate: none;
   }
   .site-loader__logo {
     opacity: 1;
@@ -615,12 +619,6 @@
     animation: none;
   }
   .has-loader .enter {
-    animation-delay: calc(var(--enter-delay, 0ms) + 800ms);
-  }
-}
-@keyframes loader-fade {
-  to {
-    opacity: 0;
-    visibility: hidden;
+    animation-delay: calc(var(--enter-delay, 0ms) + 700ms);
   }
 }

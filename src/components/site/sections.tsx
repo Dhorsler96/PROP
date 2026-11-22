@@ -179,7 +179,7 @@ export function Rules() {
             settings={{ palette: "pool", zoom: 2.2, x: -0.3, y: 0.2 }}
           >
             <figure
-              className="overflow-hidden rounded-xl bg-card shadow-pop"
+              className="overflow-hidden rounded-md bg-card shadow-pop"
               aria-label="Example evaluation account"
             >
               <figcaption className="flex flex-wrap items-center gap-3 border-b border-border px-5 py-3.5">
@@ -239,7 +239,7 @@ export function TerminalSection() {
       className="scroll-mt-14 border-b border-border"
     >
       <div className={wrap}>
-        <div className="grid overflow-hidden rounded-2xl border border-border lg:grid-cols-2">
+        <div className="grid overflow-hidden rounded-md border border-border lg:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-b border-border p-6 sm:p-12 lg:border-r lg:border-b-0">
             <p className="type-eyebrow text-brand-text">
               <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
@@ -276,7 +276,7 @@ export function TerminalSection() {
             settings={{ palette: "lane", zoom: 1.8, x: 0.25 }}
             className="flex items-center rounded-none"
           >
-            <div className="w-full overflow-hidden rounded-xl shadow-pop">
+            <div className="w-full overflow-hidden rounded-md shadow-pop">
               <TerminalPreview />
             </div>
           </PlateBackdrop>
