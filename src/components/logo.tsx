@@ -5,7 +5,7 @@
  */
 export function Logo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 112 28" fill="none" role="img" aria-label="Tendril" className={className}>
+    <svg viewBox="-0.5 0 84.5 28" fill="none" role="img" aria-label="Tendril" className={className}>
       <text
         x="0"
         y="22"

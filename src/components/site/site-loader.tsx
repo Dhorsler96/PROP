@@ -17,7 +17,7 @@ export function SiteLoader() {
         <span key={c} className="site-loader__panel" style={{ background: c, "--i": i } as React.CSSProperties} />
       ))}
       <span className="site-loader__panel site-loader__panel--final" style={{ "--i": PANELS.length } as React.CSSProperties}>
-        <Logo className="site-loader__logo h-8 w-auto" />
+        <Logo className="site-loader__logo h-14 w-auto sm:h-20" />
       </span>
     </div>
   );
