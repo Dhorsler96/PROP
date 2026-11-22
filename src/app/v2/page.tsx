@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader, Ticker } from "@/components/site/header";
-import { HeroTerminal } from "@/components/site/hero-terminal";
+import { HeroSwitch } from "@/components/site/hero-switch";
 import { Pricing } from "@/components/site/pricing";
 import { SiteLoader } from "@/components/site/site-loader";
 import { Closing, Faq, Footer, HowItWorks, Rules, TerminalSection } from "@/components/site/sections";
@@ -19,7 +19,7 @@ export default function LandingV2() {
       <SiteHeader />
       <Ticker />
       <main>
-        <HeroTerminal />
+        <HeroSwitch initial="terminal" />
         <HowItWorks />
         <Pricing />
         <Rules />

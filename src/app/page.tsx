@@ -1,5 +1,5 @@
 import { SiteHeader, Ticker } from "@/components/site/header";
-import { Hero } from "@/components/site/hero";
+import { HeroSwitch } from "@/components/site/hero-switch";
 import { Pricing } from "@/components/site/pricing";
 import { SiteLoader } from "@/components/site/site-loader";
 import { Closing, Faq, Footer, HowItWorks, Rules, TerminalSection } from "@/components/site/sections";
@@ -11,7 +11,7 @@ export default function Home() {
       <SiteHeader />
       <Ticker />
       <main>
-        <Hero />
+        <HeroSwitch />
         <HowItWorks />
         <Pricing />
         <Rules />

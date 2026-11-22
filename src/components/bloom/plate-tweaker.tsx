@@ -40,7 +40,7 @@ export function PlateTweaker({ value, onChange }: { value: PlateSettings; onChan
 
   if (!open) {
     return (
-      <Button variant="outline" size="sm" className="absolute right-4 bottom-4 z-20 bg-card" onClick={() => setOpen(true)}>
+      <Button variant="outline" size="sm" className="absolute left-4 bottom-4 z-20 bg-card" onClick={() => setOpen(true)}>
         <SlidersHorizontal className="size-3.5" strokeWidth={2} aria-hidden /> Tweak backplate
       </Button>
     );
@@ -50,7 +50,7 @@ export function PlateTweaker({ value, onChange }: { value: PlateSettings; onChan
     <div
       role="dialog"
       aria-label="Backplate settings"
-      className="enter absolute right-4 bottom-4 z-20 flex max-h-[calc(100%-2rem)] w-[min(320px,calc(100%-2rem))] flex-col gap-3 overflow-y-auto overscroll-contain rounded-xl border border-input bg-popover p-4 text-left shadow-pop"
+      className="enter absolute left-4 bottom-4 z-20 flex max-h-[calc(100%-2rem)] w-[min(320px,calc(100%-2rem))] flex-col gap-3 overflow-y-auto overscroll-contain rounded-xl border border-input bg-popover p-4 text-left shadow-pop"
     >
       <div className="flex items-center justify-between">
         <span className="type-label text-muted-foreground">Backplate</span>

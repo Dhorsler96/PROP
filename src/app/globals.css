@@ -626,6 +626,10 @@
 .has-loader .enter {
   animation-delay: calc(var(--enter-delay, 0ms) + 1950ms);
 }
+/* After switching hero styles, the new hero enters straight away. */
+.has-loader [data-hero-switched] .enter {
+  animation-delay: var(--enter-delay, 0ms);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .site-loader {

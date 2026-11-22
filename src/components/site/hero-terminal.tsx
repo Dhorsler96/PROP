@@ -15,10 +15,10 @@ export function HeroTerminal() {
       <div aria-hidden className="hero-plate pointer-events-none absolute inset-0 -z-10">
         <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} settings={PLATE} className="size-full" />
       </div>
-      {/* Brand glow from the top, then the plate settles back into the page colour behind the snapshot. */}
+      {/* A soft clearing behind the headline, then the plate settles into the page colour behind the snapshot. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_42%_30%_at_50%_30%,color-mix(in_srgb,var(--background)_72%,transparent)_0%,transparent_100%),radial-gradient(ellipse_70%_55%_at_50%_0%,color-mix(in_srgb,var(--primary)_30%,transparent)_0%,transparent_70%),linear-gradient(to_bottom,transparent_45%,var(--background)_85%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_42%_30%_at_50%_30%,color-mix(in_srgb,var(--background)_72%,transparent)_0%,transparent_100%),linear-gradient(to_bottom,transparent_45%,var(--background)_85%)]"
       />
 
       <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 pt-24 text-center sm:px-8 md:pt-32">
