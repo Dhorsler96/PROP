@@ -7,17 +7,10 @@ import { CtaButton } from "@/components/ui/cta";
 import { Slider } from "@/components/ui/misc";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { hexRgb, initBloom, uploadThreshold, type BloomGl } from "./gl";
+import { initBloom, setPaletteUniforms, uploadThreshold, type BloomGl } from "./gl";
+import { PALETTES, type PaletteKey } from "./palettes";
 
-// Backplate grounds. Bars are drawn tone on tone, so one colour defines a plate.
-const PALETTES = {
-  clay: { label: "Clay", bg: "#e8853d" },
-  brand: { label: "Brand", bg: "#4566fa" },
-  growth: { label: "Growth", bg: "#8dcd8e" },
-  paper: { label: "Paper", bg: "#f1f1ee" },
-  ink: { label: "Ink", bg: "#1b1816" },
-} as const;
-type Palette = keyof typeof PALETTES;
+type Palette = PaletteKey;
 
 const FORMATS = {
   "1:1": [1, 1],
@@ -99,7 +92,7 @@ export function BloomStudio() {
     gl.uniform1f(u.uInvert, s.invert ? 1 : 0);
     gl.uniform1i(u.uImg, 0);
     gl.uniform1f(u.uGrow, grow);
-    gl.uniform3fv(u.uBg, hexRgb(PALETTES[s.palette].bg));
+    setPaletteUniforms(ctx, PALETTES[s.palette]);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -273,7 +266,7 @@ export function BloomStudio() {
         </div>
 
         <Group label="Palette">
-          <Pick value={palette} onChange={(v) => setPalette(v as Palette)} options={Object.entries(PALETTES).map(([k, v]) => [k, v.label])} label="Palette" />
+          <Swatches value={palette} onChange={setPalette} />
         </Group>
 
         <Group label="Source">
@@ -368,6 +361,49 @@ export function BloomStudio() {
         </div>
         <p className="type-body-sm text-muted-foreground">Copies and exports at 2400px on the long edge, fully bloomed, without the sample cards. Seed {params.seed}.</p>
       </aside>
+    </div>
+  );
+}
+
+function Swatches({ value, onChange }: { value: Palette; onChange: (v: Palette) => void }) {
+  return (
+    <div role="radiogroup" aria-label="Palette" className="grid grid-cols-4 gap-1.5 sm:grid-cols-6">
+      {(Object.entries(PALETTES) as [Palette, (typeof PALETTES)[Palette]][]).map(([k, p]) => {
+        const on = value === k;
+        const a = "a" in p ? p.a : undefined;
+        const b = "b" in p ? p.b : undefined;
+        return (
+          <button
+            key={k}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            aria-label={p.label}
+            title={p.label}
+            onClick={() => onChange(k)}
+            className={cn(
+              "flex flex-col items-center gap-1 rounded-md p-1 transition-[background-color,scale] duration-150 ease-out motion-safe:active:scale-[0.96]",
+              on ? "bg-accent" : "hover:bg-inset",
+            )}
+          >
+            <span
+              aria-hidden
+              className={cn("relative h-7 w-full overflow-hidden rounded-sm", on ? "ring-2 ring-primary" : "ring-1 ring-border")}
+              style={{ background: p.bg }}
+            >
+              {a ? (
+                <>
+                  <span className="absolute inset-y-1 left-[22%] w-[14%] rounded-[1px]" style={{ background: a }} />
+                  <span className="absolute inset-y-1 left-[52%] w-[26%] rounded-[1px]" style={{ background: b }} />
+                </>
+              ) : (
+                <span className="absolute inset-y-1 left-[30%] w-[20%] rounded-[1px] bg-black/15" />
+              )}
+            </span>
+            <span className={cn("type-data-sm", on ? "text-foreground" : "text-muted-foreground")}>{p.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

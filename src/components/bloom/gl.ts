@@ -1,6 +1,6 @@
 import { FRAG, VERT } from "./shader";
 
-export const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg", "uMode", "uImgAspect", "uThresh", "uGain", "uInvert", "uImg"] as const;
+export const UNIFORMS = ["uRes", "uPos", "uTime", "uSeed", "uPetals", "uLayers", "uScale", "uCols", "uCover", "uDash", "uGrain", "uStem", "uGrow", "uInk", "uBg", "uLineA", "uLineB", "uDuo", "uMode", "uImgAspect", "uThresh", "uGain", "uInvert", "uImg"] as const;
 
 export type BloomGl = { gl: WebGLRenderingContext; u: Record<string, WebGLUniformLocation | null> };
 
@@ -72,6 +72,15 @@ export function uploadThreshold(gl: WebGLRenderingContext, img: HTMLImageElement
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   return true;
+}
+
+/** Set the ground and, for colour palettes, the two line colours. */
+export function setPaletteUniforms(ctx: BloomGl, p: { bg: string; a?: string; b?: string }) {
+  const { gl, u } = ctx;
+  gl.uniform3fv(u.uBg, hexRgb(p.bg));
+  gl.uniform3fv(u.uLineA, hexRgb(p.a ?? p.bg));
+  gl.uniform3fv(u.uLineB, hexRgb(p.b ?? p.a ?? p.bg));
+  gl.uniform1f(u.uDuo, p.a ? 1 : 0);
 }
 
 export function hexRgb(hex: string): [number, number, number] {

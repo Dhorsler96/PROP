@@ -1,3 +1,5 @@
+import type { PaletteKey } from "./palettes";
+
 /** Settings for a Bloom backplate. Plain module (no "use client") so server components can import the defaults. */
 export type PlateSettings = {
   /** 1 fits the whole flower to the plate height; higher zooms in. */
@@ -15,6 +17,8 @@ export type PlateSettings = {
   /** Motion speed; 0 holds still. */
   motion: number;
   grain: number;
+  /** A Bloom palette key; omitted plates draw tone-on-tone on the page background. */
+  palette?: PaletteKey;
 };
 
 export const PLATE_DEFAULTS: PlateSettings = {

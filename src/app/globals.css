@@ -43,25 +43,25 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  /* Neutral near-white after devin.ai: #fcfcfc ground, white cards, black-alpha lines, #191919 ink.
-     Brand #4566fa: passes 4.5:1 as text on the ground and white on it; a deeper #3a59ee for text on tinted panels. Greys deepened from Devin's 56%
+  /* Neutral light after devin.ai, knocked back a step: #f3f3f1 ground, #f8f8f7 cards, black-alpha lines, #191919 ink.
+     Brand #4566fa: passes 4.5:1 as text on the ground and white on it; a deeper #3654e0 for blue text. Greys deepened from Devin's 56%
      alpha (#7b7b7b) so body copy still clears 4.5:1. */
-  --hp-bg-page: #fcfcfc;
-  --hp-bg-surface: #ffffff;
-  --hp-bg-raised: #f8f8f8;
-  --hp-bg-elevated: #ffffff;
-  --hp-bg-highlight: #f0f0f0;
+  --hp-bg-page: #f3f3f1;
+  --hp-bg-surface: #f8f8f7;
+  --hp-bg-raised: #ececea;
+  --hp-bg-elevated: #fafaf9;
+  --hp-bg-highlight: #e4e4e2;
   --hp-bg-inset: #0000000a;
-  --hp-line-hair: #ebebeb;
-  --hp-line-strong: #dedede;
+  --hp-line-hair: #e2e2df;
+  --hp-line-strong: #d4d4d1;
   --hp-line-brand: #4566fa59;
   --hp-text-primary: #191919;
   --hp-text-secondary: #5e5e5e;
-  --hp-text-muted: #6e6e6e;
+  --hp-text-muted: #666665;
   --hp-text-disabled: #19191952;
   --hp-brand: #4566fa;
   --hp-brand-bright: #3654f5;
-  --hp-brand-text: #3a59ee;
+  --hp-brand-text: #3654e0;
   --hp-brand-wash: #4566fa14;
   --hp-brand-wash-strong: #4566fa24;
   --hp-on-brand: #ffffff;
@@ -158,8 +158,9 @@
 @utility type-hero {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: clamp(2rem, 1.8rem + 0.6vw, 2.25rem);
-  line-height: 1.2;
+  /* One step above the section headings so the page has a clear lead (40 → 56px). */
+  font-size: clamp(2.5rem, 1.9rem + 1.8vw, 3.5rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
   text-wrap: balance;
 }

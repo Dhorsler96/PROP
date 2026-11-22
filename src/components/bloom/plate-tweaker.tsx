@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/misc";
 import { cn } from "@/lib/utils";
 import { PLATE_DEFAULTS, type PlateSettings } from "./bloom-plate";
 
-const CONTROLS: { key: keyof PlateSettings; label: string; min: number; max: number; step: number; fmt: (v: number) => string }[] = [
+const CONTROLS: { key: Exclude<keyof PlateSettings, "palette">; label: string; min: number; max: number; step: number; fmt: (v: number) => string }[] = [
   { key: "zoom", label: "Zoom", min: 0.5, max: 4, step: 0.05, fmt: (v) => `${v.toFixed(2)}×` },
   { key: "x", label: "Position X", min: -1, max: 1, step: 0.01, fmt: (v) => v.toFixed(2) },
   { key: "y", label: "Position Y", min: -1, max: 1, step: 0.01, fmt: (v) => v.toFixed(2) },

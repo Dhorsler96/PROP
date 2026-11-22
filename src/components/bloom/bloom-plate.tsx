@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { hexRgb, initBloom, uploadThreshold } from "./gl";
+import { initBloom, setPaletteUniforms, uploadThreshold } from "./gl";
+import { PALETTES } from "./palettes";
 import { PLATE_DEFAULTS, type PlateSettings } from "./plate-settings";
 
 /**
@@ -69,7 +70,8 @@ export function BloomPlate({
       gl.uniform1f(u.uCols, Math.min(r.width, r.height) / st.spacing);
       gl.uniform1f(u.uDash, 0.14);
       gl.uniform1f(u.uGrain, st.grain);
-      gl.uniform1f(u.uInk, light ? st.ink * 0.65 : st.ink);
+      // Colour plates are pictures, so they look the same in both themes.
+      gl.uniform1f(u.uInk, light && !st.palette ? st.ink * 0.65 : st.ink);
       gl.uniform1f(u.uStem, 0);
       gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / 2200));
       gl.uniform1f(u.uMode, 1);
@@ -78,7 +80,8 @@ export function BloomPlate({
       gl.uniform1f(u.uGain, st.contrast);
       gl.uniform1f(u.uInvert, 0);
       gl.uniform1i(u.uImg, 0);
-      gl.uniform3fv(u.uBg, hexRgb(css.getPropertyValue("--hp-bg-page") || "#14120b"));
+      if (st.palette) setPaletteUniforms(ctx, PALETTES[st.palette]);
+      else setPaletteUniforms(ctx, { bg: css.getPropertyValue("--hp-bg-page").trim() || "#14120b" });
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     const loop = (now: number) => {

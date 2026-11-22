@@ -14,7 +14,8 @@ precision highp float;
 uniform vec2 uRes, uPos;
 uniform float uTime, uSeed, uPetals, uLayers, uScale, uCols, uCover, uDash, uGrain, uStem, uGrow, uInk, uMode, uImgAspect, uThresh, uGain, uInvert;
 uniform sampler2D uImg;
-uniform vec3 uBg;
+uniform vec3 uBg, uLineA, uLineB;
+uniform float uDuo;
 
 float h1(float n) { return fract(sin(n * 127.1 + uSeed * 31.7) * 43758.5453); }
 float h2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + uSeed * 17.3) * 43758.5453); }
@@ -112,6 +113,14 @@ void main() {
   vec3 soft = lum < 0.2 ? mix(uBg, vec3(1.0), 0.1) : uBg * 0.84;
   vec3 ink = lum < 0.2 ? vec3(0.93, 0.92, 0.9) : vec3(0.1, 0.09, 0.08);
   vec3 col = mix(uBg, mix(soft, ink, uInk), bar);
+  if (uDuo > 0.5) {
+    // Colour plate: the ground drifts like a brushed field; thin lines take colour A,
+    // swelling lines blend towards colour B.
+    float drift = noise2(p * 2.2 + 40.0) * 0.65 + noise2(p * 7.0 + 9.0) * 0.35;
+    vec3 ground = uBg * (0.9 + 0.2 * drift);
+    vec3 lineCol = mix(uLineA, uLineB, smoothstep(0.5, 3.0, lvl));
+    col = mix(ground, mix(mix(ground, lineCol, 0.55), lineCol, uInk), bar);
+  }
 
   // Paper grain and the odd light fleck.
   float g = h2(floor(p * 900.0) + 0.5);
