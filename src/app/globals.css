@@ -647,3 +647,14 @@
     animation-delay: calc(var(--enter-delay, 0ms) + 750ms);
   }
 }
+
+/* Landing v2 terminal snapshot: one capture per theme. */
+.snap-light {
+  display: none;
+}
+[data-theme="light"] .snap-light {
+  display: block;
+}
+[data-theme="light"] .snap-dark {
+  display: none;
+}
