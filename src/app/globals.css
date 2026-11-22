@@ -550,3 +550,107 @@
 [data-theme="light"] .hero-plate {
   opacity: 0.55;
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+ * Site loader (homepage). Candles grow in a staggered wave (~700ms), the wordmark
+ * fades up, then the cover lifts away with an expo ease and is hidden. Total ~1.6s.
+ * The page's .enter animations are pushed back so they play as the cover lifts.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.site-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--background);
+  pointer-events: none;
+  animation: loader-lift 650ms cubic-bezier(0.7, 0, 0.2, 1) 1000ms forwards;
+}
+.site-loader__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: loader-inner-out 450ms cubic-bezier(0.7, 0, 0.84, 0) 1000ms forwards;
+}
+.site-loader__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 56px;
+}
+.site-loader__bar {
+  width: 4px;
+  height: var(--h);
+  border-radius: 1px;
+  background: var(--primary);
+  transform-origin: bottom;
+  scale: 1 0;
+  opacity: 0.35;
+  animation: loader-grow 520ms cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 24ms) forwards;
+}
+/* The leading candles land brighter, so the run reads as momentum. */
+.site-loader__bar:nth-last-child(-n + 6) {
+  --o: 1;
+}
+.site-loader__logo {
+  color: var(--foreground);
+  opacity: 0;
+  translate: 0 6px;
+  animation: loader-logo 500ms cubic-bezier(0.16, 1, 0.3, 1) 380ms forwards;
+}
+@keyframes loader-grow {
+  to {
+    scale: 1 1;
+    opacity: var(--o, 0.55);
+  }
+}
+@keyframes loader-logo {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes loader-inner-out {
+  to {
+    opacity: 0;
+    translate: 0 -16px;
+  }
+}
+@keyframes loader-lift {
+  to {
+    translate: 0 -100%;
+    visibility: hidden;
+  }
+}
+.has-loader .enter {
+  animation-delay: calc(var(--enter-delay, 0ms) + 1150ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-loader {
+    animation: loader-fade 300ms ease-out 500ms forwards;
+  }
+  .site-loader__inner {
+    animation: none;
+  }
+  .site-loader__bar {
+    scale: 1 1;
+    opacity: var(--o, 0.55);
+    animation: none;
+  }
+  .site-loader__logo {
+    opacity: 1;
+    translate: none;
+    animation: none;
+  }
+  .has-loader .enter {
+    animation-delay: calc(var(--enter-delay, 0ms) + 600ms);
+  }
+}
+@keyframes loader-fade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
