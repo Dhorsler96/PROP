@@ -1,6 +1,6 @@
-# Hyperprop
+# Tendril
 
-Marketing site (`/`) and demo trading terminal (`/terminal`) for Hyperprop, built from the PROP Figma design system.
+Marketing site (`/`) and demo trading terminal (`/terminal`) for Tendril, built from the PROP Figma design system.
 
 - **Next.js 16** (App Router, Cache Components) + **Tailwind CSS 4**
 - **shadcn/ui-style components** in `src/components/ui`, built on **Base UI**

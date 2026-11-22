@@ -15,7 +15,7 @@ const instrument = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Hyperprop — Trade funded capital",
+  title: "Tendril — Trade funded capital",
   description:
     "Buy an evaluation, hit the target, and trade our capital on a live perps terminal. Keep up to 90% of what you make.",
 };

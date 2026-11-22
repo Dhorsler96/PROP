@@ -9,7 +9,7 @@ import { TerminalPreview } from "./terminal-preview";
 
 function SectionHead({ eyebrow, title, id, children, small }: { eyebrow: string; title: string; id: string; children?: React.ReactNode; small?: boolean }) {
   return (
-    <div className="flex max-w-xl flex-col gap-5">
+    <div className="flex max-w-xl flex-col gap-3">
       <p className="type-eyebrow text-muted-foreground">{eyebrow}</p>
       <h2 id={id} className={small ? "type-heading" : "type-display"}>
         {title}
@@ -204,7 +204,7 @@ export function Closing() {
       </div>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,var(--background)_10%,transparent_100%)]" />
       <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-4 py-32 text-center sm:px-8">
-        <h2 id="closing-title" className="type-hero">
+        <h2 id="closing-title" className="type-statement">
           Prove it. <span className="text-primary">Get funded.</span>
         </h2>
         <p className="type-body-md text-secondary-text">One evaluation between you and up to $100,000 of trading capital.</p>

@@ -3,8 +3,8 @@ import { BloomStudio } from "@/components/bloom/bloom-studio";
 import { SiteHeader } from "@/components/site/header";
 
 export const metadata: Metadata = {
-  title: "Bloom — Prop brand image tool",
-  description: "Generate Prop brand backplates: flowers that emerge from columns of chart bars on a textured ground.",
+  title: "Bloom — Tendril brand image tool",
+  description: "Generate Tendril brand backplates: flowers that emerge from columns of chart bars on a textured ground.",
 };
 
 export default function BloomPage() {

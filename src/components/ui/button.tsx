@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Kbd } from "./kbd";
 
 /**
- * shadcn <Button>, Hyperprop styling. 14px / 500 sentence-case label (x.ai scale).
+ * shadcn <Button>, Tendril styling. 14px / 500 sentence-case label (x.ai scale).
  * Press feedback: scale 0.96 over 150ms ease-out (better-ui), never when disabled,
  * only without the reduced-motion preference.
  */
@@ -34,7 +34,7 @@ export const buttonVariants = cva(
       size: {
         sm: "h-8 px-3",
         default: "h-10 px-5",
-        lg: "h-12 rounded-lg px-7",
+        lg: "h-11 rounded-lg px-6 text-base leading-6",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

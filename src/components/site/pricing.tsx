@@ -29,7 +29,7 @@ export function Pricing() {
     <section id="pricing" aria-labelledby="pricing-title" className="scroll-mt-14 border-b border-border">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-12 px-4 py-24 sm:px-8 md:px-20 md:py-28">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <div className="flex max-w-xl flex-col gap-5">
+          <div className="flex max-w-xl flex-col gap-3">
             <p className="type-eyebrow text-muted-foreground">Evaluations</p>
             <h2 id="pricing-title" className="type-display">Pick your size</h2>
             <p className="type-body-md text-secondary-text [text-wrap:pretty]">

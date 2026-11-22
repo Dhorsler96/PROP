@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Toaster as Sonner, toast, type ToasterProps } from "sonner";
 
 /**
- * shadcn-style Sonner toaster, styled with the Prop tokens. Follows the site's
+ * shadcn-style Sonner toaster, styled with the Tendril tokens. Follows the site's
  * data-theme attribute (not the OS setting), so it flips with the theme toggle.
  */
 export function Toaster(props: ToasterProps) {

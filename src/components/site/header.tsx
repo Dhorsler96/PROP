@@ -15,7 +15,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-input bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-8 px-4 sm:px-8">
-        <Link href="/" aria-label="Hyperprop home" className="shrink-0">
+        <Link href="/" aria-label="Tendril home" className="shrink-0">
           <Logo className="h-4 w-auto" />
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
@@ -23,7 +23,7 @@ export function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="link-draw inline-flex h-8 items-center px-2.5 text-[13px] leading-[1.5] font-medium text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground"
+              className="link-draw inline-flex h-8 items-center px-2.5 text-sm leading-[1.4] text-muted-foreground transition-[color] duration-300 ease-out hover:text-foreground"
             >
               {l.label}
             </Link>

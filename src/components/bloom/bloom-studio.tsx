@@ -208,7 +208,7 @@ export function BloomStudio() {
     if (!url) return;
     const a = document.createElement("a");
     a.href = url;
-    a.download = `prop-bloom-${params.seed}-${format.replace(":", "x")}.png`;
+    a.download = `tendril-bloom-${params.seed}-${format.replace(":", "x")}.png`;
     a.click();
   };
 

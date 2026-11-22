@@ -6,7 +6,7 @@ import { BloomPlate, PLATE_DEFAULTS, type PlateSettings } from "@/components/blo
 import { PlateTweaker } from "@/components/bloom/plate-tweaker";
 import { fmt } from "@/lib/utils";
 
-const STORE = "prop:hero-plate";
+const STORE = "tendril:hero-plate";
 
 export function Hero() {
   const [plate, setPlate] = useState<PlateSettings>(PLATE_DEFAULTS);
@@ -40,7 +40,9 @@ export function Hero() {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden border-b border-border">
       {/* Live Bloom backplate: chart lines that swell into a flower, drawn by the /bloom shader. */}
-      <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} settings={plate} className="pointer-events-none absolute inset-0 size-full" />
+      <div aria-hidden className="hero-plate pointer-events-none absolute inset-0">
+        <BloomPlate src="/bloom/marigold.webp" aspect={1024 / 1021} settings={plate} className="size-full" />
+      </div>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_45%,color-mix(in_srgb,var(--background)_70%,transparent)_0%,transparent_100%)]" />
 
       {tweak ? <PlateTweaker value={plate} onChange={update} /> : null}
@@ -50,10 +52,10 @@ export function Hero() {
           <span className="mr-2 inline-block size-1.5 rounded-full bg-primary align-middle motion-safe:animate-[pulse-dot_2s_infinite]" />
           Decentralized prop trading
         </p>
-        <h1 id="hero-title" className="enter type-hero max-w-[16ch]" style={{ "--enter-delay": "100ms" } as React.CSSProperties}>
+        <h1 id="hero-title" className="enter type-hero max-w-[20ch]" style={{ "--enter-delay": "100ms" } as React.CSSProperties}>
           Trade funded capital
         </h1>
-        <p className="enter max-w-[34rem] type-lead text-secondary-text [text-wrap:pretty]" style={{ "--enter-delay": "200ms" } as React.CSSProperties}>
+        <p className="enter max-w-[30rem] type-lead text-secondary-text [text-wrap:pretty]" style={{ "--enter-delay": "200ms" } as React.CSSProperties}>
           Buy an evaluation, hit the target, and trade our capital on a live perps terminal. Keep up to 90% of what you make.
         </p>
         <div className="enter flex flex-wrap justify-center gap-3" style={{ "--enter-delay": "300ms" } as React.CSSProperties}>

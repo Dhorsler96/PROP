@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Hyperprop design tokens, exported from the PROP Figma file ("Hyperprop" variable
+ * Tendril design tokens, exported from the PROP Figma file ("Hyperprop" variable
  * collection, Dark + Light modes). The shadcn token layer below aliases them, exactly
  * as the "shadcn" collection does in Figma.
  */
@@ -42,34 +42,36 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  /* Brand #4768c3 (#7297f6 deepened to pass 4.5:1 on paper). Warm paper after Cursor: #f7f7f4 ground, #26251e ink, Cursor's warm border greys */
-  --hp-bg-page: #f7f7f4;
-  --hp-bg-surface: #fbfbf9;
-  --hp-bg-raised: #f1f1ee;
+  /* Neutral near-white after devin.ai: #fcfcfc ground, white cards, black-alpha lines, #191919 ink.
+     Brand #4768c3 (#7297f6 deepened to pass 4.5:1 on the ground). Greys deepened from Devin's 56%
+     alpha (#7b7b7b) so body copy still clears 4.5:1. */
+  --hp-bg-page: #fcfcfc;
+  --hp-bg-surface: #ffffff;
+  --hp-bg-raised: #f8f8f8;
   --hp-bg-elevated: #ffffff;
-  --hp-bg-highlight: #e8e8e5;
-  --hp-bg-inset: #26251e0a;
-  --hp-line-hair: #e4e2dc;
-  --hp-line-strong: #d9d5cf;
+  --hp-bg-highlight: #f0f0f0;
+  --hp-bg-inset: #0000000a;
+  --hp-line-hair: #ebebeb;
+  --hp-line-strong: #dedede;
   --hp-line-brand: #4768c359;
-  --hp-text-primary: #26251e;
-  --hp-text-secondary: #65645e;
-  --hp-text-muted: #6f6e68;
-  --hp-text-disabled: #26251e52;
+  --hp-text-primary: #191919;
+  --hp-text-secondary: #5e5e5e;
+  --hp-text-muted: #6e6e6e;
+  --hp-text-disabled: #19191952;
   --hp-brand: #4768c3;
   --hp-brand-bright: #3553ac;
   --hp-brand-wash: #4768c314;
   --hp-brand-wash-strong: #4768c324;
   --hp-on-brand: #ffffff;
   --hp-cta-glow: #2c4797;
-  --hp-ink: #26251e;
+  --hp-ink: #191919;
   --hp-pos: #3e7c42;
   --hp-pos-wash: #3e7c4214;
   --hp-neg: #c2412b;
   --hp-neg-wash: #c2412b12;
   --hp-warn: #9a5b12;
   --hp-warn-wash: #9a5b1214;
-  --hp-shadow-pop: 0 16px 48px rgb(38 37 30 / 0.12);
+  --hp-shadow-pop: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px rgb(0 0 0 / 0.08);
 }
 
 /* shadcn token layer */
@@ -122,7 +124,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Hyperprop extras */
+  /* Tendril extras */
   --color-surface: var(--hp-bg-surface);
   --color-raised: var(--hp-bg-raised);
   --color-elevated: var(--hp-bg-elevated);
@@ -147,52 +149,59 @@
 }
 
 /* Type styles — mirror the Figma text styles (Type spec, node 13:200) */
-/* Marketing heading scale, modelled on x.ai: a restrained hero (36 → 60px), one clear
-   section step (36 → 48px), then 30 / 24px. Solid 1.0 leading on display sizes and a
-   light -1% track, instead of oversized, tightly packed headlines. */
+/* Marketing heading scale, modelled on devin.ai: modest headlines (32 → 36px) at 1.2 leading
+   and a firm -3% track, all at regular weight; one large statement size (40 → 64px) for the
+   closing line; 16px body at 1.4. Hierarchy comes from tone and space more than size. */
 @utility type-hero {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: clamp(2.25rem, 1.05rem + 3.4vw, 3.75rem);
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 1.8rem + 0.6vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+@utility type-statement {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 1.6rem + 2.6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 @utility type-display {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: clamp(2.25rem, 1.6rem + 1.6vw, 3rem);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  font-size: clamp(2rem, 1.8rem + 0.6vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 @utility type-heading {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: clamp(1.5rem, 1.25rem + 0.6vw, 1.875rem);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2rem);
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 @utility type-title-display {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 1.5rem;
-  line-height: 1.33;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.2;
   letter-spacing: -0.01em;
 }
 @utility type-lead {
   font-family: var(--font-sans);
-  font-size: 1.125rem;
-  line-height: 1.625;
+  font-size: 1rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 @utility type-eyebrow {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 0.6875rem;
+  font-weight: 400;
+  font-size: 0.875rem;
   line-height: 1.4;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 @utility type-title {
   font-family: var(--font-sans);
@@ -203,7 +212,8 @@
 @utility type-body-md {
   font-family: var(--font-sans);
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 @utility type-body {
   font-family: var(--font-sans);
@@ -531,3 +541,8 @@
   }
 }
 
+
+/* The hero plate's tone-on-tone lines read heavier on the near-white ground; quieten them. */
+[data-theme="light"] .hero-plate {
+  opacity: 0.55;
+}

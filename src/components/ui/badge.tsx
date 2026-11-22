@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-/** shadcn <Badge> with Hyperprop positive / warning variants for account state. */
+/** shadcn <Badge> with Tendril positive / warning variants for account state. */
 export const badgeVariants = cva(
   "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 type-label whitespace-nowrap",
   {
