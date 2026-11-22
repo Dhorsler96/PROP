@@ -18,11 +18,14 @@ export function BloomPlate({
   src,
   aspect,
   settings = PLATE_DEFAULTS,
+  growMs = 2200,
   className,
 }: {
   src: string;
   aspect: number;
   settings?: PlateSettings;
+  /** How long the lines take to grow in from the centre. */
+  growMs?: number;
   className?: string;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -73,7 +76,7 @@ export function BloomPlate({
       // Colour plates are pictures, so they look the same in both themes.
       gl.uniform1f(u.uInk, light && !st.palette ? st.ink * 0.65 : st.ink);
       gl.uniform1f(u.uStem, 0);
-      gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / 2200));
+      gl.uniform1f(u.uGrow, reduced ? 1 : Math.min(1, (now - start) / growMs));
       gl.uniform1f(u.uMode, 1);
       gl.uniform1f(u.uImgAspect, aspect);
       gl.uniform1f(u.uThresh, st.threshold);
@@ -119,7 +122,7 @@ export function BloomPlate({
       ro.disconnect();
       mo.disconnect();
     };
-  }, [src, aspect]);
+  }, [src, aspect, growMs]);
 
   return <canvas ref={ref} aria-hidden className={cn("transition-[opacity] duration-700 ease-out", ready ? "opacity-100" : "opacity-0", className)} />;
 }
